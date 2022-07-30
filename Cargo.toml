@@ -1,0 +1,9 @@
+[package]
+name = "netherite-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0.140", features = ["derive"] }
+hematite-nbt = "0.5.2"
+tokio = { version = "1.20.1", features = ["full"] }
