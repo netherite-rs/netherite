@@ -1,0 +1,11 @@
+[package]
+name = "protocol"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+byteorder = "1.4.3"
+bytebuffer = "0.2.1"
+uuid = "1.1.2"
+paste = "1.0.7"
+hematite-nbt = "0.5.2"
