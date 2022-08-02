@@ -3,8 +3,10 @@ extern crate proc_macro;
 use proc_macro2::{Ident, TokenStream};
 use quote::{quote, ToTokens};
 use syn::DataStruct;
+use crate::PacketInfo;
 
-pub fn derive_serverbound(ast: syn::DeriveInput) -> TokenStream {
+pub fn derive_serverbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenStream {
+    let id = options.id.expect("Serverbound packet must have an ID. Use #[packet(id=XXX)]");
     let name = ast.ident;
     let data = ast.data;
     let mut t: Vec<TokenStream> = vec![];
@@ -38,6 +40,10 @@ pub fn derive_serverbound(ast: syn::DeriveInput) -> TokenStream {
                     #name {
                         #(#t)*
                     }
+                }
+
+                fn id() -> i32 {
+                    #id
                 }
             }
         };

@@ -5,7 +5,11 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::DataStruct;
 
-pub fn derive_clientbound(ast: syn::DeriveInput) -> TokenStream {
+use crate::PacketInfo;
+
+pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenStream {
+    let id = options.id.expect("Clientbound packet must have an ID. Use #[packet(id=XXX)]");
+    println!("{:?}", options.id);
     let name = ast.ident;
     let data = ast.data;
     let mut t: Vec<TokenStream> = vec![];
@@ -40,6 +44,10 @@ pub fn derive_clientbound(ast: syn::DeriveInput) -> TokenStream {
                     #(#t)*
                     Ok(())
                 }
+
+                fn id() -> i32 {
+                    #id
+                }
             }
         };
         return output.into();
@@ -57,7 +65,7 @@ fn m_name(method: &str, field_name: &Ident) -> TokenStream {
 fn big_endian(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        byteorder::BigEndian::#t(output, &self.#field_name)?;
+        byteorder::BigEndian::#t(output, self.#field_name)?;
     };
 }
 

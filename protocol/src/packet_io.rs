@@ -13,7 +13,7 @@ const CONTINUE_BIT: u32 = 0x80; /* = 128 */
 const MAX_VARINT_BITS: u32 = 32;
 const MAX_VARLONG_BITS: usize = 64;
 
-pub trait PacketReaderExt: Read {
+pub trait PacketReaderExt: Read + Sized {
     fn read_varint(&mut self) -> Result<VarInt> {
         let mut value: u32 = 0;
         let mut position = 0_u32;
@@ -81,7 +81,7 @@ pub trait PacketReaderExt: Read {
     }
 }
 
-pub trait PacketWriterExt: Write {
+pub trait PacketWriterExt: Write + Sized {
     fn write_varint(&mut self, value: &VarInt) -> Result<usize> {
         let mut value = value.0 as u32;
         let mut size: usize = 1;
@@ -135,8 +135,8 @@ pub trait PacketWriterExt: Write {
 
 /// All types that implement `Write` get methods defined in `PacketWriterExt`
 /// for free.
-impl<W: Write + ?Sized> PacketWriterExt for W {}
+impl<W: Write> PacketWriterExt for W {}
 
 /// All types that implement `Read` get methods defined in `PacketReaderExt`
 /// for free.
-impl<R: Read + ?Sized> PacketReaderExt for R {}
+impl<R: Read> PacketReaderExt for R {}
