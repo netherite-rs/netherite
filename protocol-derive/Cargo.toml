@@ -13,3 +13,4 @@ syn = { version = "1.0.98", features = ["derive"] }
 quote = "1.0.20"
 darling = "0.14.1"
 proc-macro2 = "1.0.42"
+lazy_static = "1.4.0"

@@ -1,26 +1,17 @@
-use std::io::{Read, Write};
-use bytebuffer::ByteBuffer;
-use byteorder::{BigEndian, WriteBytesExt};
-use nbt::Blob;
-use protocol::fields::{PacketField, VarLong};
-use protocol_derive::{Clientbound, Serverbound};
-use protocol::bound::Clientbound;
-use protocol::packet_io::PacketWriterExt;
+use protocol::identifier::Identifier;
 use crate::server::Server;
+use protocol_derive::Clientbound;
+use protocol::bound::Clientbound;
 
 mod server;
 
-#[derive(Serverbound)]
+#[derive(Clientbound)]
 #[packet(id = 0x01)]
-struct LoginPacket {
-    name: String,
-    value: VarLong,
-}
+struct Packet {}
 
 #[tokio::main]
 async fn main() {
-    let packet = LoginPacket { name: String::new(), value: VarLong(30) };
-    println!("{}", LoginPacket::id())
     // let server = Server::new(2000).await;
     // server.start().await;
+    let id = Identifier::minecraft("hello".to_string());
 }

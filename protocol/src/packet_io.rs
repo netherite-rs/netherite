@@ -6,7 +6,9 @@ use std::num::Wrapping;
 
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 
-use crate::fields::{PacketField, Position, VarInt, VarLong};
+use crate::fields::numeric::{VarInt, VarLong};
+use crate::fields::PacketField;
+use crate::fields::position::Position;
 
 const SEGMENT_BITS: u32 = 0x7F; /* = 127 */
 const CONTINUE_BIT: u32 = 0x80; /* = 128 */

@@ -9,7 +9,6 @@ use crate::PacketInfo;
 
 pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenStream {
     let id = options.id.expect("Clientbound packet must have an ID. Use #[packet(id=XXX)]");
-    println!("{:?}", options.id);
     let name = ast.ident;
     let data = ast.data;
     let mut t: Vec<TokenStream> = vec![];
@@ -19,7 +18,7 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
             match x.ty.into_token_stream().to_string().as_str() {
                 "VarInt" => t.push(m_name("varint", &field_name)),
                 "VarLong" => t.push(m_name("varlong", &field_name)),
-                "String" | "Identifier" => t.push(m_name("utf8", &field_name)),
+                "String" => t.push(m_name("utf8", &field_name)),
                 "Blob" => t.push(m_name("blob", &field_name)),
                 "bool" => {
                     t.push(quote! {protocol::packet_io::PacketWriterExt::write_bool(output, self.#field_name)?;}.into())

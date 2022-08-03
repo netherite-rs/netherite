@@ -1,13 +1,17 @@
 pub mod packet_io;
 pub mod bound;
-pub mod fields;
+// pub mod fields;
+pub mod identifier;
+mod fields;
 
 #[cfg(test)]
 mod tests {
     use bytebuffer::ByteBuffer;
     use uuid::{uuid, Uuid};
-    use crate::fields::{Position, VarInt, VarLong};
+    use crate::fields::numeric::{VarInt, VarLong};
 
+    use crate::fields::position::Position;
+    use crate::identifier::Identifier;
     use crate::packet_io::PacketReaderExt;
     use crate::packet_io::PacketWriterExt;
 
@@ -63,9 +67,9 @@ mod tests {
         let mut buffer = ByteBuffer::new();
         let position = Position::new(-4920, -20, 40);
 
-        buffer.write_position(&position).unwrap();
-        let read = buffer.read_position().unwrap();
-        // assert_eq!(read, position);
+        buffer.write_field(&position).unwrap();
+        let read = buffer.read_field::<Position>().unwrap();
+        assert_eq!(read, position);
     }
 
     #[test]
@@ -73,7 +77,6 @@ mod tests {
         let arr = [20_u8; 20];
         let mut buffer = ByteBuffer::new();
         buffer.write_field(&arr).unwrap();
-        println!("{:?}", buffer.to_bytes());
         let x = buffer.read_field::<[u8; 20]>().unwrap();
         assert_eq!(x, arr);
     }
@@ -90,5 +93,14 @@ mod tests {
 
         let read = buffer.read_field::<[Uuid; 3]>().unwrap();
         assert_eq!(read, arr);
+    }
+
+    #[test]
+    #[should_panic]
+    fn panic_identifier() {
+        Identifier::new(
+            String::from("contain spaces"),
+            String::from("contain spaces"),
+        );
     }
 }
