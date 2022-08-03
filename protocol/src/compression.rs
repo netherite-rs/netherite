@@ -31,7 +31,7 @@ pub fn read_uncompressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)>
     let packet_length = input.read_varint()?.0 as usize;
     let packet_id = input.read_varint_with_size()?;
     let actual_length = packet_length - packet_id.1;
-    if actual_length < 0 || actual_length > MAX_DATA_LENGTH {
+    if actual_length > MAX_DATA_LENGTH {
         return Err(Error::new(
             ErrorKind::InvalidData,
             format!("received length {} is greater than the allowed maximum ({})", actual_length, MAX_DATA_LENGTH))
