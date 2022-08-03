@@ -5,12 +5,13 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0.140", features = ["derive"] }
-hematite-nbt = "0.5.2"
 tokio = { version = "1.20.1", features = ["full"] }
+uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics"] }
 
 protocol = { path = "protocol" }
 protocol-derive = { path = "protocol-derive" }
 
+hematite-nbt = "0.5.2"
 bytebuffer = "0.2.1"
 byteorder = "1.4.3"
-uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics"] }
+toml = "0.5.9"
