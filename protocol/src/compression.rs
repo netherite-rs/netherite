@@ -15,13 +15,13 @@ pub fn read_compressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)> {
     if data_length != 0 {
         let mut zlib = ZlibDecoder::new(input);
         let packet_id = zlib.read_varint_with_size()?;
-        let mut buf = vec![0_u8; data_length - packet_id.1];
+        let mut buf = vec![0; data_length - packet_id.1];
         zlib.read_exact(buf.as_mut_slice())?;
         Ok((packet_id.0.0, buf))
     } else {
         let packet_id = input.read_varint_with_size()?;
         let data_length = packet_length - packet_id.1;
-        let mut buf = vec![0_u8; data_length - packet_id.1];
+        let mut buf = vec![0; data_length - packet_id.1];
         input.read_exact(buf.as_mut_slice())?;
         Ok((packet_id.0.0, buf))
     }
