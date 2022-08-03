@@ -1,8 +1,7 @@
 pub mod packet_io;
 pub mod bound;
-// pub mod fields;
-pub mod identifier;
 mod fields;
+mod compression;
 
 #[cfg(test)]
 mod tests {
@@ -11,7 +10,7 @@ mod tests {
     use crate::fields::numeric::{VarInt, VarLong};
 
     use crate::fields::position::Position;
-    use crate::identifier::Identifier;
+    use crate::fields::identifier::Identifier;
     use crate::packet_io::PacketReaderExt;
     use crate::packet_io::PacketWriterExt;
 

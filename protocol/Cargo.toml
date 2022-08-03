@@ -11,12 +11,3 @@ paste = "1.0.7"
 hematite-nbt = "0.5.2"
 regex = "1.6.0"
 lazy_static = "1.4.0"
-[features]
-derive = ["protocol-derive"]
-
-[dependencies.protocol-derive]
-path = "../protocol-derive"
-optional = true
-
-[package.metadata.playground]
-features = ["derive"]

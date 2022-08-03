@@ -9,6 +9,7 @@ use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 pub mod numeric;
 pub mod position;
 pub mod generic;
+pub mod identifier;
 
 pub trait PacketField {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized;

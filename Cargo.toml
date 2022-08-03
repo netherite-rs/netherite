@@ -7,15 +7,10 @@ edition = "2021"
 serde = { version = "1.0.140", features = ["derive"] }
 hematite-nbt = "0.5.2"
 tokio = { version = "1.20.1", features = ["full"] }
+
 protocol = { path = "protocol" }
 protocol-derive = { path = "protocol-derive" }
+
 bytebuffer = "0.2.1"
 byteorder = "1.4.3"
-
-[dependencies.uuid]
-version = "1.1.2"
-features = [
-    "v4", # Lets you generate random UUIDs
-    "fast-rng", # Use a faster (but still sufficiently random) RNG
-    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
-]
+uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics"] }
