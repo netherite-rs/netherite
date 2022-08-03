@@ -29,7 +29,7 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                         "u16" | "u32" | "u64" | "u128" | "i16" | "i32" | "i64" | "i128" => {
                             t.push(big_endian(type_name, &field_name).into())
                         }
-                        packet_field => {
+                        _ => {
                             t.push(write_name(&field_name).into())
                         }
                     }
@@ -43,7 +43,7 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                     Ok(())
                 }
 
-                fn id() -> i32 {
+                fn id(&self) -> i32 {
                     #id
                 }
             }

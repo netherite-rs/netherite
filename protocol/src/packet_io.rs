@@ -2,7 +2,6 @@ use io::Result;
 use std::io;
 use std::io::{Error, Read, Write};
 use std::io::ErrorKind::InvalidData;
-use std::num::Wrapping;
 
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 

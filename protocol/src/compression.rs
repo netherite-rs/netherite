@@ -1,8 +1,12 @@
-use std::io::{Error, ErrorKind, Read, Result};
+use std::io::{Error, ErrorKind, Read, Result, Write};
+use bytebuffer::ByteBuffer;
 
 use flate2::read::ZlibDecoder;
+use serde::__private::de::Content::ByteBuf;
+use crate::bound::Clientbound;
+use crate::fields::numeric::VarInt;
 
-use crate::packet_io::PacketReaderExt;
+use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 
 const MAX_DATA_LENGTH: usize = 2097152;
 
@@ -41,4 +45,12 @@ pub fn read_uncompressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)>
 
     input.read_exact(buf.as_mut_slice())?;
     Ok((packet_id.0.0, buf))
+}
+
+pub fn write_compressed_packet(packet: impl Clientbound, output: &mut impl Write) -> Result<usize> {
+    let id = VarInt(packet.id());
+    let mut length = id.size();
+    let mut buf = ByteBuffer::new();
+    packet.write_packet(&mut buf)?;
+    length += buf.len();
 }

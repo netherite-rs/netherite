@@ -70,3 +70,4 @@ impl<T: Serialize + DeserializeOwned> PacketField for Json<T> {
         Ok(())
     }
 }
+

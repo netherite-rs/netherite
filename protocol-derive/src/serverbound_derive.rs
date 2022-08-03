@@ -41,7 +41,7 @@ pub fn derive_serverbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                     }
                 }
 
-                fn id() -> i32 {
+                fn id(&self) -> i32 {
                     #id
                 }
             }

@@ -97,3 +97,31 @@ macro_rules! field_for_numeric {
 }
 
 field_for_numeric! { u16, u32, u64, u128, i16, i32, i64, i128}
+
+impl VarInt {
+    pub(crate) fn size(&self) -> usize {
+        let mut value = self.0 as u32;
+        let mut size: usize = 1;
+        loop {
+            if (value & !0x7F) == 0 {
+                return size;
+            }
+            value >>= 7;
+            size += 1;
+        }
+    }
+}
+
+impl VarLong {
+    fn size(&self) -> usize {
+        let mut value = self.0 as u64;
+        let mut size: usize = 1;
+        loop {
+            if (value & !0x7F) == 0 {
+                return size;
+            }
+            value >>= 7;
+            size += 1;
+        }
+    }
+}
