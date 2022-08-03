@@ -12,42 +12,51 @@ use crate::fields::position::Position;
 
 const SEGMENT_BITS: u32 = 0x7F; /* = 127 */
 const CONTINUE_BIT: u32 = 0x80; /* = 128 */
-const MAX_VARINT_BITS: u32 = 32;
-const MAX_VARLONG_BITS: usize = 64;
+const MAX_VARINT_LENGTH: usize = 5;
+const MAX_VARLONG_LENGTH: usize = 10;
 
 pub trait PacketReaderExt: Read + Sized {
+
     fn read_varint(&mut self) -> Result<VarInt> {
+        self.read_varint_with_size().map(|t| t.0)
+    }
+
+    fn read_varint_with_size(&mut self) -> Result<(VarInt, usize)> {
         let mut value: u32 = 0;
-        let mut position = 0_u32;
+        let mut size = 0_usize;
         loop {
             let current_byte = self.read_u8()?;
-            value |= ((current_byte & SEGMENT_BITS as u8) as u32) << position;
+            value |= ((current_byte & SEGMENT_BITS as u8) as u32) << size;
             if (current_byte & CONTINUE_BIT as u8) == 0 {
                 break;
             }
-            position += 7;
-            if position >= MAX_VARINT_BITS as u32 {
+            size += 1;
+            if size >= MAX_VARINT_LENGTH {
                 return Err(Error::new(InvalidData, "VarInt too big"));
             }
         }
-        Ok(VarInt(value as i32))
+        Ok((VarInt(value as i32), size))
     }
 
     fn read_varlong(&mut self) -> Result<VarLong> {
+        self.read_varlong_with_size().map(|t| t.0)
+    }
+
+    fn read_varlong_with_size(&mut self) -> Result<(VarLong, usize)> {
         let mut value: u64 = 0;
-        let mut position = 0_u64;
+        let mut size = 0_usize;
         loop {
             let current_byte = self.read_u8()?;
-            value |= ((current_byte & SEGMENT_BITS as u8) as u64) << position;
+            value |= ((current_byte & SEGMENT_BITS as u8) as u64) << size;
             if (current_byte & CONTINUE_BIT as u8) == 0 {
                 break;
             }
-            position += 7;
-            if position >= MAX_VARLONG_BITS as u64 {
+            size += 1;
+            if size >= MAX_VARLONG_LENGTH {
                 return Err(Error::new(InvalidData, "VarLong too big"));
             }
         }
-        Ok(VarLong(value as i64))
+        Ok((VarLong(value as i64), size))
     }
 
     fn read_utf8(&mut self) -> Result<String> {

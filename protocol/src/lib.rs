@@ -93,13 +93,4 @@ mod tests {
         let read = buffer.read_field::<[Uuid; 3]>().unwrap();
         assert_eq!(read, arr);
     }
-
-    #[test]
-    #[should_panic]
-    fn panic_identifier() {
-        Identifier::new(
-            String::from("contain spaces"),
-            String::from("contain spaces"),
-        );
-    }
 }
