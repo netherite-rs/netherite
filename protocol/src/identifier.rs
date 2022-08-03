@@ -1,5 +1,8 @@
+use std::io::{Read, Write, Result, Error, ErrorKind};
 use lazy_static::lazy_static;
 use regex::Regex;
+use crate::fields::PacketField;
+use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 
 lazy_static! {
     static ref NAMESPACE_REGEX: Regex = Regex::new(r"[a-z0-9._-]+").unwrap();
@@ -38,5 +41,22 @@ impl Identifier {
 
     pub fn value(&self) -> &str {
         &self.value
+    }
+}
+
+impl PacketField for Identifier {
+    fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
+        let string = input.read_utf8()?;
+        let split = match string.split_once(':') {
+            None => return Err(Error::new(ErrorKind::InvalidData, format!("Identifier does not contain ':'. String: {:?}", string))),
+            Some(v) => v
+        };
+        Ok(Identifier::new(split.0.to_string(), split.1.to_string()))
+    }
+
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+        let string = format!("{}:{}", self.namespace, self.value);
+        output.write_utf8(&string)?;
+        Ok(())
     }
 }
