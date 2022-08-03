@@ -11,6 +11,7 @@ lazy_static! {
 
 static MINECRAFT: &str = "minecraft";
 
+#[derive(Debug)]
 pub struct Identifier {
     namespace: String,
     value: String,
@@ -35,6 +36,33 @@ impl Identifier {
         Self { namespace, value }
     }
 
+    pub fn parse(string: &String) -> Result<Identifier> {
+        if string.len() >= 256 {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                format!("Identifiers must be less than 256 characters. Found: {}", string.len()))
+            );
+        }
+        let split = match string.split_once(':') {
+            None => return Err(Error::new(ErrorKind::InvalidData, format!("Identifier does not contain ':'. String: {:?}", string))),
+            Some(v) => v
+        };
+        if !NAMESPACE_REGEX.is_match(split.0) {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                format!("Namespace '{}' can only contain lowercase alphabet, underscores, dots, dashes and numbers.", split.0))
+            );
+        }
+        if !VALUE_REGEX.is_match(split.1) {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                format!("Value '{}' can only contain lowercase alphabet, underscores, dots, dashes, slashes and numbers.", split.1))
+            );
+        }
+
+        Ok(Identifier::new(split.0.to_string(), split.1.to_string()))
+    }
+
     pub fn namespace(&self) -> &str {
         &self.namespace
     }
@@ -47,16 +75,24 @@ impl Identifier {
 impl PacketField for Identifier {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
         let string = input.read_utf8()?;
-        let split = match string.split_once(':') {
-            None => return Err(Error::new(ErrorKind::InvalidData, format!("Identifier does not contain ':'. String: {:?}", string))),
-            Some(v) => v
-        };
-        Ok(Identifier::new(split.0.to_string(), split.1.to_string()))
+        Identifier::parse(&string)
     }
 
     fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         let string = format!("{}:{}", self.namespace, self.value);
         output.write_utf8(&string)?;
         Ok(())
+    }
+}
+
+impl From<String> for Identifier {
+    fn from(v: String) -> Self {
+        Identifier::parse(&v).unwrap()
+    }
+}
+
+impl Into<String> for Identifier {
+    fn into(self) -> String {
+        format!("{}:{}", self.namespace, self.value)
     }
 }
