@@ -12,30 +12,29 @@ use crate::fields::position::Position;
 
 const SEGMENT_BITS: u32 = 0x7F; /* = 127 */
 const CONTINUE_BIT: u32 = 0x80; /* = 128 */
-const MAX_VARINT_LENGTH: usize = 5;
-const MAX_VARLONG_LENGTH: usize = 10;
+const MAX_VARINT_BITS: usize = 32;
+const MAX_VARLONG_BITS: usize = 64;
 
 pub trait PacketReaderExt: Read + Sized {
-
     fn read_varint(&mut self) -> Result<VarInt> {
         self.read_varint_with_size().map(|t| t.0)
     }
 
     fn read_varint_with_size(&mut self) -> Result<(VarInt, usize)> {
         let mut value: u32 = 0;
-        let mut size = 0_usize;
+        let mut position = 0_u32;
         loop {
             let current_byte = self.read_u8()?;
-            value |= ((current_byte & SEGMENT_BITS as u8) as u32) << size;
+            value |= ((current_byte & SEGMENT_BITS as u8) as u32) << position;
             if (current_byte & CONTINUE_BIT as u8) == 0 {
                 break;
             }
-            size += 1;
-            if size >= MAX_VARINT_LENGTH {
+            position += 7;
+            if position >= MAX_VARINT_BITS as u32 {
                 return Err(Error::new(InvalidData, "VarInt too big"));
             }
         }
-        Ok((VarInt(value as i32), size))
+        Ok((VarInt(value as i32), (position / 7) as usize))
     }
 
     fn read_varlong(&mut self) -> Result<VarLong> {
@@ -44,19 +43,19 @@ pub trait PacketReaderExt: Read + Sized {
 
     fn read_varlong_with_size(&mut self) -> Result<(VarLong, usize)> {
         let mut value: u64 = 0;
-        let mut size = 0_usize;
+        let mut size = 0_u64;
         loop {
             let current_byte = self.read_u8()?;
             value |= ((current_byte & SEGMENT_BITS as u8) as u64) << size;
             if (current_byte & CONTINUE_BIT as u8) == 0 {
                 break;
             }
-            size += 1;
-            if size >= MAX_VARLONG_LENGTH {
+            size += 7;
+            if size >= MAX_VARLONG_BITS as u64 {
                 return Err(Error::new(InvalidData, "VarLong too big"));
             }
         }
-        Ok((VarLong(value as i64), size))
+        Ok((VarLong(value as i64), (size / 7) as usize))
     }
 
     fn read_utf8(&mut self) -> Result<String> {
@@ -76,19 +75,6 @@ pub trait PacketReaderExt: Read + Sized {
 
     fn read_field<T: PacketField>(&mut self) -> Result<T> {
         T::read_field(self)
-    }
-
-    fn read_position(&mut self) -> Result<Position> {
-        let val = self.read_u64::<BigEndian>()?;
-        let mut x = Wrapping(val >> 38_u64);
-        let mut y = Wrapping(val & 0xFFF_u64);
-        let mut z = Wrapping((val >> 12) & 0x3FFFFFF_u64);
-
-        if x >= Wrapping(1 << 25) { x -= 1 << 26 }
-        if y >= Wrapping(1 << 11) { y -= 1 << 12 }
-        if z >= Wrapping(1 << 25) { z -= 1 << 26 }
-
-        Ok(Position::new(x.0 as i32, y.0 as i16, z.0 as i32))
     }
 }
 

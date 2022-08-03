@@ -30,7 +30,6 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                             t.push(big_endian(type_name, &field_name).into())
                         }
                         packet_field => {
-                            println!("packet_field: {}", packet_field);
                             t.push(write_name(&field_name).into())
                         }
                     }
@@ -64,7 +63,7 @@ fn m_name(method: &str, field_name: &Ident) -> TokenStream {
 fn big_endian(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        byteorder::BigEndian::#t(output, self.#field_name)?;
+        byteorder::WriteBytesExt::#t::<byteorder::BigEndian>(output, self.#field_name)?;
     };
 }
 

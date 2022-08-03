@@ -1,6 +1,7 @@
 use crate::server::Server;
 
 mod server;
+mod packets;
 
 #[tokio::main]
 async fn main() {

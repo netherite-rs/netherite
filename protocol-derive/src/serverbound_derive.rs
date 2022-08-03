@@ -27,7 +27,6 @@ pub fn derive_serverbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                         }
                         "bool" => t.push(m_name("bool", &field_name).into()),
                         packet_field => {
-                            println!("packet_field: {}", packet_field);
                             t.push(read_name(packet_field, &field_name).into())
                         }
                     }
@@ -62,7 +61,7 @@ fn m_name(method: &str, field_name: &Ident) -> TokenStream {
 fn big_endian(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("read_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        #field_name: byteorder::BigEndian::#t(input).expect(stringify!(failed to read field #field_name)),
+        #field_name: byteorder::ReadBytesExt::#t::<byteorder::BigEndian>(input).expect(stringify!(failed to read field #field_name)),
     };
 }
 

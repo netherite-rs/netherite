@@ -1,16 +1,16 @@
 pub mod packet_io;
 pub mod bound;
-mod fields;
-mod compression;
+pub mod fields;
+pub mod compression;
 
 #[cfg(test)]
 mod tests {
     use bytebuffer::ByteBuffer;
     use uuid::{uuid, Uuid};
+    use crate::fields::generic::Json;
     use crate::fields::numeric::{VarInt, VarLong};
 
     use crate::fields::position::Position;
-    use crate::fields::identifier::Identifier;
     use crate::packet_io::PacketReaderExt;
     use crate::packet_io::PacketWriterExt;
 
@@ -20,7 +20,7 @@ mod tests {
         let value = 256;
 
         let size = buffer.write_varint(&VarInt(value)).unwrap();
-        let i = buffer.read_varint().unwrap().0;
+        let i = buffer.read_varint_with_size().unwrap().0.0;
 
         assert_eq!(size, 2);
         assert_eq!(i, value);
@@ -92,5 +92,22 @@ mod tests {
 
         let read = buffer.read_field::<[Uuid; 3]>().unwrap();
         assert_eq!(read, arr);
+    }
+
+    #[derive(serde::Serialize, serde::Deserialize)]
+    #[derive(PartialEq, Debug)]
+    struct Person {
+        name: String,
+        age: i32,
+    }
+
+    #[test]
+    fn test_json() {
+        let mut buffer = ByteBuffer::new();
+        let person = Person { name: String::from("Jeff"), age: 20 };
+        let json = Json(person);
+        buffer.write_field(&json).unwrap();
+        let read = buffer.read_field::<Json<Person>>().unwrap();
+        assert_eq!(read, json)
     }
 }
