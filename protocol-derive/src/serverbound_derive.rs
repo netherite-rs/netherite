@@ -54,27 +54,27 @@ pub fn derive_serverbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
 fn m_name(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("read_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        #field_name: protocol::packet_io::PacketReaderExt::#t(input).expect(stringify!(failed to read field #field_name)),
+        #field_name: protocol::packet_io::PacketReaderExt::#t(input).expect(stringify!(failed to read #field_name)),
     };
 }
 
 fn big_endian(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("read_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        #field_name: byteorder::ReadBytesExt::#t::<byteorder::BigEndian>(input).expect(stringify!(failed to read field #field_name)),
+        #field_name: byteorder::ReadBytesExt::#t::<byteorder::BigEndian>(input).expect(stringify!(failed to read #field_name)),
     };
 }
 
 fn read_bytes_ext(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("read_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        #field_name: byteorder::ReadBytesExt::#t(input).expect(stringify!(failed to read field #field_name)),
+        #field_name: byteorder::ReadBytesExt::#t(input).expect(stringify!(failed to read #field_name)),
     };
 }
 
 fn read_name(type_name: &str, field_name: &Ident) -> TokenStream {
     let t = type_name.parse::<TokenStream>().unwrap();
     return quote! {
-        #field_name: input.read_field::<#t>().expect(stringify!(failed to read field #field_name)),
+        #field_name: protocol::packet_io::PacketReaderExt::read_field::<#t>(input).expect(stringify!(failed to read #field_name)),
     };
 }

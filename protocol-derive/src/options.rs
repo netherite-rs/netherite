@@ -1,4 +1,4 @@
-use darling::{FromDeriveInput, FromMeta};
+use darling::{FromDeriveInput};
 
 #[derive(FromDeriveInput, Default)]
 #[darling(default, attributes(packet))]

@@ -32,8 +32,9 @@ impl PacketField for Position {
         Ok(Position::new(x.0 as i32, y.0 as i16, z.0 as i32))
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
         let value = (((self.x as i64 & 0x3FFFFFF) << 38) | ((self.z as i64 & 0x3FFFFFF) << 12) | (self.y & 0xFFF_i16) as i64) as u64;
-        output.write_u64::<BigEndian>(value)
+        output.write_u64::<BigEndian>(value)?;
+        Ok(core::mem::size_of::<u64>())
     }
 }

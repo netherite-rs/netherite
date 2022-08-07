@@ -8,6 +8,6 @@ pub trait Serverbound {
 }
 
 pub trait Clientbound {
-    fn write_packet(&self, output: &mut impl Write) -> Result<()>;
+    fn write_packet(&self, output: &mut impl Write) -> Result<usize>;
     fn id(&self) -> i32;
 }

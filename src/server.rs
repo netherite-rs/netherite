@@ -1,5 +1,10 @@
-use tokio::io::AsyncReadExt;
+use bytebuffer::ByteBuffer;
 use tokio::net::TcpListener;
+
+use net::codec::ClientCodec;
+
+use crate::net;
+use crate::net::codec::ProtocolStage;
 
 pub struct Server {
     listener: TcpListener,
@@ -15,24 +20,29 @@ impl Server {
 
     pub async fn start(&self) {
         loop {
-            let (mut socket, _) = self.listener.accept().await.unwrap();
+            let (socket, _) = self.listener.accept().await.unwrap();
             tokio::spawn(async move {
-                let mut buf = [0; 1024];
+                let mut client_codec = ClientCodec::new(socket);
+
                 loop {
-                    socket.read(&mut buf).await.expect("failed to read from socket");
-                    // let n = match  {
-                    //     Ok(0) => return,
-                    //     Ok(n) => n,
-                    //     Err(e) => {
-                    //         eprintln!("failed to read from socket; err = {:?}", e);
-                    //         return;
-                    //     }
-                    // };
-                    println!("request: {:?}", buf)
-                    // if let Err(e) = socket.write_all(&buf[0..n]).await {
-                    //     eprintln!("failed to write to socket; err = {:?}", e);
-                    //     return;
-                    // }
+                    let rs = client_codec.read_next_packet().await;
+                    if rs.is_err() {
+                        eprintln!("failed to read packet: {}", rs.err().unwrap());
+                        return;
+                    }
+                    let read = rs.unwrap();
+                    if read.is_none() {
+                        return;
+                    }
+                    let (id, data) = read.unwrap();
+                    let mut data = ByteBuffer::from_bytes(data.as_slice());
+
+                    match *client_codec.stage() {
+                        ProtocolStage::Handshake => client_codec.handle_handshake_packet(id, &mut data).await,
+                        ProtocolStage::Status => client_codec.handle_status_packet(id, &mut data).await,
+                        ProtocolStage::Login => client_codec.handle_login_packet(id, &mut data).await,
+                        ProtocolStage::Play => client_codec.handle_play_packet(id, &mut data).await,
+                    }
                 }
             });
         }

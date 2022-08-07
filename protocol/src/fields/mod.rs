@@ -10,10 +10,11 @@ pub mod numeric;
 pub mod position;
 pub mod generic;
 pub mod identifier;
+pub mod profile;
 
 pub trait PacketField {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized;
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()>;
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize>;
 }
 
 impl PacketField for String {
@@ -21,9 +22,8 @@ impl PacketField for String {
         input.read_utf8()
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
-        output.write_utf8(&self)?;
-        Ok(())
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        output.write_utf8(&self)
     }
 }
 
@@ -32,9 +32,8 @@ impl PacketField for bool {
         input.read_bool()
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
-        output.write_bool(*self)?;
-        Ok(())
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        output.write_bool(*self)
     }
 }
 
@@ -46,9 +45,9 @@ impl PacketField for Blob {
         }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
         match self.to_writer(output) {
-            Ok(v) => Ok(v),
+            Ok(_) => Ok(self.len_bytes()),
             Err(why) => Err(Error::new(ErrorKind::InvalidData, why.to_string()))
         }
     }
@@ -61,10 +60,10 @@ impl PacketField for Uuid {
         Ok(Uuid::from_u64_pair(most_sig, least_sig))
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
         let (most_sig, least_sig) = self.as_u64_pair();
         output.write_u64::<BigEndian>(most_sig)?;
         output.write_u64::<BigEndian>(least_sig)?;
-        Ok(())
+        Ok(2 * core::mem::size_of::<u64>())
     }
 }

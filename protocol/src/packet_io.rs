@@ -3,11 +3,10 @@ use std::io;
 use std::io::{Error, Read, Write};
 use std::io::ErrorKind::InvalidData;
 
-use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{ReadBytesExt, WriteBytesExt};
 
 use crate::fields::numeric::{VarInt, VarLong};
 use crate::fields::PacketField;
-use crate::fields::position::Position;
 
 const SEGMENT_BITS: u32 = 0x7F; /* = 127 */
 const CONTINUE_BIT: u32 = 0x80; /* = 128 */
@@ -15,11 +14,8 @@ const MAX_VARINT_BITS: usize = 32;
 const MAX_VARLONG_BITS: usize = 64;
 
 pub trait PacketReaderExt: Read + Sized {
-    fn read_varint(&mut self) -> Result<VarInt> {
-        self.read_varint_with_size().map(|t| t.0)
-    }
 
-    fn read_varint_with_size(&mut self) -> Result<(VarInt, usize)> {
+    fn read_varint(&mut self) -> Result<VarInt> {
         let mut value: u32 = 0;
         let mut position = 0_u32;
         loop {
@@ -33,7 +29,7 @@ pub trait PacketReaderExt: Read + Sized {
                 return Err(Error::new(InvalidData, "VarInt too big"));
             }
         }
-        Ok((VarInt(value as i32), (position / 7) as usize))
+        Ok(VarInt(value as i32))
     }
 
     fn read_varlong(&mut self) -> Result<VarLong> {
@@ -118,13 +114,7 @@ pub trait PacketWriterExt: Write + Sized {
         Ok(1)
     }
 
-    fn write_position(&mut self, value: &Position) -> Result<usize> {
-        let value = (((value.x as i64 & 0x3FFFFFF) << 38) | ((value.z as i64 & 0x3FFFFFF) << 12) | (value.y & 0xFFF_i16) as i64) as u64;
-        self.write_u64::<BigEndian>(value)?;
-        Ok(8)
-    }
-
-    fn write_field(&mut self, value: &impl PacketField) -> Result<()> {
+    fn write_field(&mut self, value: &impl PacketField) -> Result<usize> {
         value.write_field(self)
     }
 }

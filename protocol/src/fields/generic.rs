@@ -2,6 +2,7 @@ use std::io::{Error, ErrorKind, Read, Result, Write};
 
 use serde::Serialize;
 use serde::de::DeserializeOwned;
+use crate::fields::numeric::VarInt;
 
 use crate::fields::PacketField;
 use crate::packet_io::{PacketReaderExt, PacketWriterExt};
@@ -18,8 +19,9 @@ impl<const S: usize> PacketField for [u8; S] {
         Ok(buf)
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
-        output.write_all(&self[..])
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        output.write_all(&self[..])?;
+        Ok(self.len())
     }
 }
 
@@ -35,25 +37,29 @@ impl<const S: usize, T: PacketField> PacketField for [T; S] {
         }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        let mut size: usize = 0;
         for i in 0..self.len() {
-            output.write_field(&self[i])?;
+            size += output.write_field(&self[i])?;
         }
-        Ok(())
+        Ok(size)
     }
 }
 
 impl<T: PacketField> PacketField for Option<T> {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
-        let value = input.read_field::<T>()?;
-        Ok(Some(value))
+        let value = input.read_field::<T>();
+        match value {
+            Ok(v) => Ok(Some(v)),
+            Err(_) => Ok(None)
+        }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
         if self.is_some() {
-            output.write_field(self.as_ref().unwrap())?;
+            return output.write_field(self.as_ref().unwrap());
         }
-        Ok(())
+        Ok(0)
     }
 }
 
@@ -64,10 +70,43 @@ impl<T: Serialize + DeserializeOwned> PacketField for Json<T> {
         Ok(Json(value))
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
         let string = serde_json::to_string(&self.0)?;
-        output.write_utf8(&string)?;
-        Ok(())
+        output.write_utf8(&string)
     }
 }
 
+impl<T: PacketField> PacketField for Vec<T> {
+    fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
+        let length = input.read_varint()?.0 as usize;
+        let mut buf = Vec::with_capacity(length);
+        for _ in 0..length {
+            buf.push(input.read_field::<T>()?)
+        }
+        Ok(buf)
+    }
+
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        let mut size = output.write_varint(&VarInt(self.len() as i32))?;
+        for elem in self {
+            size += output.write_field(elem)?;
+        }
+        Ok(size)
+    }
+}
+
+impl PacketField for Vec<u8> {
+    fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
+        let length = input.read_varint()?.0 as usize;
+        let mut buf = vec![0_u8; length];
+        input.read_exact(buf.as_mut_slice())?;
+        Ok(buf)
+    }
+
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        let mut size = output.write_varint(&VarInt(self.len() as i32))?;
+        output.write_all(self.as_slice())?;
+        size += self.len();
+        Ok(size)
+    }
+}

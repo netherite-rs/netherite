@@ -1,3 +1,5 @@
+extern crate core;
+
 use crate::server::Server;
 
 mod server;

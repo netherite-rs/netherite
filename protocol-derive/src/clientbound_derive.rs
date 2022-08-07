@@ -38,9 +38,10 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
         }
         let output = quote! {
             impl protocol::bound::Clientbound for #name {
-                fn write_packet(&self, output: &mut impl std::io::Write) -> std::io::Result<()> {
+                fn write_packet(&self, output: &mut impl std::io::Write) -> std::io::Result<usize> {
+                    let mut size: usize = 0;
                     #(#t)*
-                    Ok(())
+                    Ok(size)
                 }
 
                 fn id(&self) -> i32 {
@@ -56,14 +57,16 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
 fn m_name(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        protocol::packet_io::PacketWriterExt::#t(output, &self.#field_name)?;
+        size += protocol::packet_io::PacketWriterExt::#t(output, &self.#field_name)?;
     };
 }
 
 fn big_endian(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
+    let method: TokenStream = method.parse().unwrap();
     return quote! {
         byteorder::WriteBytesExt::#t::<byteorder::BigEndian>(output, self.#field_name)?;
+        size += core::mem::size_of::<#method>();
     };
 }
 
@@ -71,11 +74,12 @@ fn write_bytes_ext(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
         byteorder::WriteBytesExt::#t(output, self.#field_name)?;
+        size += 1;
     };
 }
 
 fn write_name(field_name: &Ident) -> TokenStream {
     return quote! {
-        output.write_field(&self.#field_name)?;
+        size += protocol::packet_io::PacketWriterExt::write_field(output, &self.#field_name)?;
     };
 }

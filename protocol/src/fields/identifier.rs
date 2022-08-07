@@ -78,10 +78,9 @@ impl PacketField for Identifier {
         Identifier::parse(&string)
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
         let string = format!("{}:{}", self.namespace, self.value);
-        output.write_utf8(&string)?;
-        Ok(())
+        output.write_utf8(&string)
     }
 }
 
