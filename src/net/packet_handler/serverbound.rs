@@ -67,7 +67,6 @@ pub(crate) async fn handle_encryption_response(
     let packet = LoginSuccess { profile };
     codec.write_packet(&packet).await.unwrap();
     codec.set_profile(Some(packet.profile));
-    server.players().send()
 }
 
 pub(crate) async fn handle_login_start(packet: LoginStart, codec: &mut ClientCodec, server: &Server) {
