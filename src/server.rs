@@ -1,4 +1,4 @@
-use std::ops::{Deref, Receiver};
+use std::ops::Deref;
 use std::sync::Arc;
 
 use bytebuffer::ByteBuffer;
