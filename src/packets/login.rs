@@ -1,7 +1,4 @@
-use uuid::Uuid;
-
 use chat::text_component::TextComponent;
-use protocol::fields::generic::Json;
 use protocol::fields::numeric::VarInt;
 use protocol::fields::profile::GameProfile;
 use protocol::packet_io::PacketReaderExt;
@@ -26,15 +23,15 @@ pub struct Disconnect {
 #[derive(Clientbound)]
 #[packet(id = 0x01)]
 pub struct EncryptionRequest {
-    server_id: String,
-    public_key: Vec<u8>,
-    verify_token: Vec<u8>,
+    pub(crate) server_id: String,
+    pub(crate) public_key: Vec<u8>,
+    pub(crate) verify_token: Vec<u8>,
 }
 
 #[derive(Clientbound)]
 #[packet(id = 0x02)]
 pub struct LoginSuccess {
-    profile: GameProfile
+    pub profile: GameProfile,
 }
 
 #[derive(Clientbound)]

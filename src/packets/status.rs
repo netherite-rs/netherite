@@ -47,8 +47,8 @@ pub struct RespVersion {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RespPlayers {
-    pub max: u32,
-    pub online: u32,
+    pub max: usize,
+    pub online: usize,
     pub sample: Vec<RespPlayerSample>,
 }
 

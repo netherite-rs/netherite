@@ -12,12 +12,12 @@ lazy_static! {
 static MINECRAFT: &str = "minecraft";
 
 #[derive(Debug)]
-pub struct Identifier {
+pub struct Key {
     namespace: String,
     value: String,
 }
 
-impl Identifier {
+impl Key {
     pub fn minecraft(value: String) -> Self {
         Self::new(String::from(MINECRAFT), value)
     }
@@ -36,7 +36,7 @@ impl Identifier {
         Self { namespace, value }
     }
 
-    pub fn parse(string: &String) -> Result<Identifier> {
+    pub fn parse(string: &String) -> Result<Key> {
         if string.len() >= 256 {
             return Err(Error::new(
                 ErrorKind::InvalidData,
@@ -60,7 +60,7 @@ impl Identifier {
             );
         }
 
-        Ok(Identifier::new(split.0.to_string(), split.1.to_string()))
+        Ok(Key::new(split.0.to_string(), split.1.to_string()))
     }
 
     pub fn namespace(&self) -> &str {
@@ -72,10 +72,10 @@ impl Identifier {
     }
 }
 
-impl PacketField for Identifier {
+impl PacketField for Key {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
         let string = input.read_utf8()?;
-        Identifier::parse(&string)
+        Key::parse(&string)
     }
 
     fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
@@ -84,13 +84,13 @@ impl PacketField for Identifier {
     }
 }
 
-impl From<String> for Identifier {
+impl From<String> for Key {
     fn from(v: String) -> Self {
-        Identifier::parse(&v).unwrap()
+        Key::parse(&v).unwrap()
     }
 }
 
-impl Into<String> for Identifier {
+impl Into<String> for Key {
     fn into(self) -> String {
         format!("{}:{}", self.namespace, self.value)
     }

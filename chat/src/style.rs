@@ -1,12 +1,12 @@
 use std::fmt;
 use convert_case::{Case, Casing};
 use lazy_static::lazy_static;
-use protocol::fields::identifier::Identifier;
+use protocol::fields::identifier::Key;
 
 lazy_static! {
-    static ref UNIFORM_FONT: Identifier = Identifier::minecraft(String::from("uniform"));
-    static ref ALT_FONT: Identifier = Identifier::minecraft(String::from("alt"));
-    static ref DEFAULT_FONT: Identifier = Identifier::minecraft(String::from("default"));
+    static ref UNIFORM_FONT: Key = Key::minecraft(String::from("uniform"));
+    static ref ALT_FONT: Key = Key::minecraft(String::from("alt"));
+    static ref DEFAULT_FONT: Key = Key::minecraft(String::from("default"));
 }
 
 /// Represents a color that can be represented in a [TextComponent].

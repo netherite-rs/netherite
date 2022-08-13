@@ -1,7 +1,7 @@
 use std::io::{Read, Write};
 use serde::{Deserialize, Serialize};
 
-use protocol::fields::identifier::Identifier;
+use protocol::fields::identifier::Key;
 use protocol::fields::PacketField;
 use protocol::packet_io::{PacketReaderExt, PacketWriterExt};
 use crate::component::Component;
@@ -105,7 +105,7 @@ impl Builder {
         self
     }
 
-    pub fn font(mut self, font: Identifier) -> Builder {
+    pub fn font(mut self, font: Key) -> Builder {
         self.component.font = Some(font.into());
         self
     }

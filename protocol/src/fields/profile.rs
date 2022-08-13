@@ -1,13 +1,12 @@
 use std::io::Error;
 use std::io::{ErrorKind, Read, Write};
-
-use serde::de::value::BoolDeserializer;
+use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 
 use crate::fields::PacketField;
 use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GameProfile {
     pub username: String,
     pub uuid: Uuid,
@@ -37,7 +36,7 @@ impl PacketField for GameProfile {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Property {
     pub name: String,
     pub value: String,
