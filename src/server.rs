@@ -5,9 +5,9 @@ use bytebuffer::ByteBuffer;
 use tokio::net::TcpListener;
 
 use net::codec::ClientCodec;
+
 use crate::config::ServerProperties;
 use crate::encryption::encryption::EncryptionHandler;
-
 use crate::net;
 use crate::net::codec::ProtocolStage;
 
@@ -15,7 +15,6 @@ pub struct Server {
     listener: TcpListener,
     properties: ServerProperties,
     encryption: EncryptionHandler,
-    new_players: Receiver<Player>
 }
 
 impl Server {

@@ -1,6 +1,6 @@
 use crate::net::codec::ClientCodec;
 
 struct Player {
-    codec: ,
-    health: f32
+    codec: ClientCodec,
+    health: f32,
 }

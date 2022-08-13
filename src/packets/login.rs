@@ -17,7 +17,7 @@ pub struct LoginStart {
 #[derive(Clientbound)]
 #[packet(id = 0x00)]
 pub struct Disconnect {
-    reason: TextComponent,
+    pub reason: TextComponent,
 }
 
 #[derive(Clientbound)]
