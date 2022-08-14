@@ -1,9 +1,12 @@
+use std::fmt::Debug;
 use std::io::{Error, ErrorKind, Read, Result, Write};
 
-use serde::Serialize;
 use serde::de::DeserializeOwned;
-use crate::fields::numeric::VarInt;
+use serde::Serialize;
 
+use enum_helpers::OrdinalEnum;
+
+use crate::fields::numeric::VarInt;
 use crate::fields::PacketField;
 use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 
@@ -11,6 +14,9 @@ use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 /// type by converting them to and from JSON
 #[derive(PartialEq, Debug)]
 pub struct Json<T: Serialize + DeserializeOwned>(pub T);
+
+#[derive(PartialEq, Debug)]
+pub struct Ordinal<T: OrdinalEnum>(pub T);
 
 impl<const S: usize> PacketField for [u8; S] {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
@@ -108,5 +114,20 @@ impl PacketField for Vec<u8> {
         output.write_all(self.as_slice())?;
         size += self.len();
         Ok(size)
+    }
+}
+
+impl<T: OrdinalEnum> PacketField for Ordinal<T> {
+    fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
+        let ordinal = input.read_varint()?.0 as u32;
+        let result = T::from_ordinal(ordinal);
+        match result {
+            Ok(v) => Ok(Ordinal(v)),
+            Err(why) => Err(Error::new(ErrorKind::InvalidData, why))
+        }
+    }
+
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        output.write_varint(&VarInt(self.0.ordinal() as i32))
     }
 }
