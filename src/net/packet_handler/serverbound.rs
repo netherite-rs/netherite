@@ -1,6 +1,3 @@
-use std::borrow::Borrow;
-use std::ops::Deref;
-
 use rustc_serialize::hex::ToHex;
 use sha1::{Digest, Sha1};
 use uuid::Uuid;
@@ -115,7 +112,7 @@ pub(crate) async fn handle_status_request(_: &StatusRequest, codec: &mut ClientC
         },
         description: TextComponent::builder()
             .text(server.properties().status().motd().to_string())
-            .color(&RgbColor::new(230, 20, 40))
+            .color(&RgbColor::new(230, 47, 70))
             .build(),
         favicon: Some(
             server.properties().status().read_icon()

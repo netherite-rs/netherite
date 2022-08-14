@@ -11,6 +11,8 @@ uuid = { version = "1.1.2", features = ["v3", "serde", "v4", "fast-rng", "macro-
 protocol = { path = "protocol" }
 protocol-derive = { path = "protocol-derive" }
 chat = { path = "chat" }
+enum-helpers = { path = "enum-helpers" }
+enum-helpers-derive = { path = "enum-helpers-derive" }
 
 serde_json = "1.0.83"
 hematite-nbt = "0.5.2"
@@ -30,3 +32,4 @@ base64 = "0.13.0"
 rustc-serialize = "0.3.24"
 reqwest = { version = "0.11", features = ["json"] }
 sha-1 = "0.10.0"
+enum-ordinalize = "3.1.11"
