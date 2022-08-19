@@ -10,7 +10,7 @@ pub struct HoverEvent {
 }
 
 impl HoverEvent {
-    fn show_text(text: TextComponent) -> HoverEvent {
+    pub fn show_text(text: TextComponent) -> HoverEvent {
         HoverEvent {
             action: String::from("show_text"),
             value: JsonSerializer::serialize(&text).unwrap(),

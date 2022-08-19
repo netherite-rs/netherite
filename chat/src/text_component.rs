@@ -68,6 +68,22 @@ impl TextComponent {
     pub fn builder() -> Builder {
         Builder::new()
     }
+
+    pub fn plain(text: &str) -> TextComponent {
+        TextComponent {
+            text: text.to_string(),
+            bold: false,
+            italic: false,
+            strikethrough: false,
+            underlined: false,
+            obfuscated: false,
+            font: None,
+            color: None,
+            hover_event: None,
+            click_event: None,
+            extra: vec![]
+        }
+    }
 }
 
 impl Builder {

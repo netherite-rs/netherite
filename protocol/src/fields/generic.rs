@@ -15,8 +15,15 @@ use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 #[derive(PartialEq, Debug)]
 pub struct Json<T: Serialize + DeserializeOwned>(pub T);
 
+/// An ordinal writes the ordinal of its inner value
 #[derive(PartialEq, Debug)]
 pub struct Ordinal<T: OrdinalEnum>(pub T);
+
+/// An Option that must know beforehand whether it is present or not.
+/// This is done by encoding a boolean before the actual value, indicating
+/// whether it's present or not.
+#[derive(PartialEq, Debug)]
+pub struct KnownOption<T>(pub Option<T>);
 
 impl<const S: usize> PacketField for [u8; S] {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
@@ -129,5 +136,25 @@ impl<T: OrdinalEnum> PacketField for Ordinal<T> {
 
     fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
         output.write_varint(&VarInt(self.0.ordinal() as i32))
+    }
+}
+
+impl<T: PacketField> PacketField for KnownOption<T> {
+    fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
+        let present = input.read_bool()?;
+        if present {
+            return Ok(KnownOption(Some(input.read_field::<T>()?)));
+        }
+        return Ok(KnownOption(None));
+    }
+
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+        let mut size = 0;
+        let opt = self.0.as_ref();
+        size += output.write_bool(opt.is_some())?;
+        if opt.is_some() {
+            size += output.write_field(opt.unwrap())?;
+        }
+        Ok(size)
     }
 }

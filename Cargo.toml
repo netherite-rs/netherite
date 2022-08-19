@@ -20,7 +20,12 @@ bytebuffer = "0.2.1"
 byteorder = "1.4.3"
 toml = "0.5.9"
 bytes = "1.2.1"
+
+signature = "1.6.0"
+
 rsa = "0.6.1"
+ring = "0.16.20"
+sha2 = "0.10.2"
 lazy_static = "1.4.0"
 rand = "0.8.5"
 md5 = "0.7.0"
@@ -32,4 +37,4 @@ base64 = "0.13.0"
 rustc-serialize = "0.3.24"
 reqwest = { version = "0.11", features = ["json"] }
 sha-1 = "0.10.0"
-enum-ordinalize = "3.1.11"
+num-bigint = "0.4.3"

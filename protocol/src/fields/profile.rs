@@ -1,36 +1,38 @@
-use std::io::Error;
 use std::io::{ErrorKind, Read, Write};
-use serde::{Serialize, Deserialize};
+use std::io::Error;
+
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::fields::generic::KnownOption;
 use crate::fields::PacketField;
 use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GameProfile {
-    pub username: String,
-    pub uuid: Uuid,
+    pub name: String,
+    pub id: Uuid,
     pub properties: Vec<Property>,
 }
 
 impl PacketField for GameProfile {
     fn read_field<R: Read>(input: &mut R) -> std::io::Result<Self> where Self: Sized {
-        let uuid: Uuid = input.read_field()?;
-        let username = input.read_utf8()?;
-        if username.len() > 16 {
+        let id: Uuid = input.read_field()?;
+        let name = input.read_utf8()?;
+        if name.len() > 16 {
             return Err(Error::new(ErrorKind::InvalidData, "username cannot be longer than 16 characters."));
         }
         let properties = input.read_field()?;
         Ok(GameProfile {
-            username,
-            uuid,
+            name,
+            id,
             properties,
         })
     }
 
     fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<usize> {
-        let mut size = output.write_field(&self.uuid)?;
-        size += output.write_utf8(&self.username)?;
+        let mut size = output.write_field(&self.id)?;
+        size += output.write_utf8(&self.name)?;
         size += output.write_field(&self.properties)?;
         Ok(size)
     }
@@ -40,7 +42,6 @@ impl PacketField for GameProfile {
 pub struct Property {
     pub name: String,
     pub value: String,
-    pub is_signed: bool,
     pub signature: Option<String>,
 }
 
@@ -48,21 +49,26 @@ impl PacketField for Property {
     fn read_field<R: Read>(input: &mut R) -> std::io::Result<Self> where Self: Sized {
         let name = input.read_utf8().expect("failed to read 'name'");
         let value = input.read_utf8().expect("failed to read 'value'");
-        let is_signed = input.read_bool().expect("failed to read 'is_signed'");
-        let signature = input.read_field().expect("failed to read 'is_signed'");
+        let signature = input.read_field::<KnownOption<String>>().expect("failed to read 'signature'");
         Ok(Property {
             name,
             value,
-            is_signed,
-            signature,
+            signature: signature.0,
         })
     }
 
     fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<usize> {
         let mut size = output.write_utf8(&self.name)?;
         size += output.write_utf8(&self.value)?;
-        size += output.write_bool(self.is_signed)?;
-        size += output.write_field(&self.signature)?;
+        match &self.signature {
+            Some(v) => {
+                size += output.write_bool(true)?;
+                size += output.write_utf8(v)?;
+            }
+            None => {
+                size += output.write_bool(false)?;
+            }
+        }
         Ok(size)
     }
 }

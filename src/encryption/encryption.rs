@@ -23,7 +23,7 @@ impl EncryptionHandler {
 
     pub fn encrypt(&self, data: &Vec<u8>) -> Result<Vec<u8>> {
         let mut rng = rand::thread_rng();
-        self.public_key.encrypt(&mut rng, PaddingScheme::new_pkcs1v15_encrypt(), data.as_slice())
+        self.private_key.encrypt(&mut rng, PaddingScheme::new_pkcs1v15_encrypt(), data.as_slice())
     }
 
     pub fn decrypt(&self, data: &Vec<u8>) -> Result<Vec<u8>> {
@@ -42,5 +42,4 @@ impl EncryptionHandler {
     pub fn compare_verify_tokens(&self, token: Vec<u8>) -> bool {
         self.verify_token == token
     }
-
 }

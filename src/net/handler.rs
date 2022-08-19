@@ -40,7 +40,7 @@ impl PacketHandler {
 
     pub async fn handle_play_packet(codec: &mut ClientCodec, id: i32, data: &mut ByteBuffer, server: &Server) {
         match id {
-            n => panic!("invalid play packet id: {}", n)
+            n => { /*panic!("invalid play packet id: {}", n)*/ }
         }
     }
 

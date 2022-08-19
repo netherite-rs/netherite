@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::io::{Error, ErrorKind, Read, Result, Write};
 
 use flate2::Compression;
@@ -54,7 +55,7 @@ pub fn read_uncompressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)>
     Ok((packet_id.0, buf))
 }
 
-pub fn write_packet(packet: &impl Clientbound, output: &mut impl Write, threshold: i32) -> Result<()> {
+pub fn write_packet(packet: &(impl Clientbound + Debug), output: &mut impl Write, threshold: i32) -> Result<()> {
     if threshold >= 0 {
         write_compressed_packet(packet, output, threshold)
     } else {
@@ -62,7 +63,7 @@ pub fn write_packet(packet: &impl Clientbound, output: &mut impl Write, threshol
     }
 }
 
-pub fn write_uncompressed_packet(packet: &impl Clientbound, output: &mut impl Write) -> Result<()> {
+pub fn write_uncompressed_packet(packet: &(impl Clientbound + Debug), output: &mut impl Write) -> Result<()> {
     let id = VarInt(packet.id());
     let mut length = id.size();
 
@@ -76,7 +77,7 @@ pub fn write_uncompressed_packet(packet: &impl Clientbound, output: &mut impl Wr
     Ok(())
 }
 
-pub fn write_compressed_packet(packet: &impl Clientbound, output: &mut impl Write, threshold: i32) -> Result<()> {
+pub fn write_compressed_packet(packet: &(impl Clientbound + Debug), output: &mut impl Write, threshold: i32) -> Result<()> {
     let id = VarInt(packet.id());
 
     let mut uncompressed_data = Vec::new();
@@ -87,23 +88,23 @@ pub fn write_compressed_packet(packet: &impl Clientbound, output: &mut impl Writ
     let data_length = VarInt(uncompressed_data.len() as i32);
 
     if uncompressed_data.len() < threshold as usize {
-        output.write_varint(&data_length)?;
+        // + 1 for the length size being 0
+        output.write_varint(&VarInt(data_length.0 + 1))?;
         output.write_varint(&VarInt(0))?;
         output.write_all(uncompressed_data.as_slice())?;
         return Ok(());
     }
 
-    let (compressed_length, compressed_content) = {
+    let (compressed_length, comrpessed_data) = {
         let mut writer = ZlibEncoder::new(Vec::new(), Compression::default());
-        writer.write_all(uncompressed_data.as_slice())?;
+        writer.write(uncompressed_data.as_slice())?;
         let result = writer.finish()?;
         (result.len(), result)
     };
 
     let packet_length = data_length.size() + compressed_length;
-
     output.write_varint(&VarInt(packet_length as i32))?;
     output.write_varint(&data_length)?;
-    output.write_all(compressed_content.as_slice())?;
+    output.write_all(comrpessed_data.as_slice())?;
     Ok(())
 }

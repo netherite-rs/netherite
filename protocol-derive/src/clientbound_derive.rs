@@ -19,7 +19,6 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                 "VarInt" => t.push(m_name("varint", &field_name)),
                 "VarLong" => t.push(m_name("varlong", &field_name)),
                 "String" => t.push(m_name("utf8", &field_name)),
-                "Blob" => t.push(m_name("blob", &field_name)),
                 "bool" => {
                     t.push(quote! {protocol::packet_io::PacketWriterExt::write_bool(output, self.#field_name)?;}.into())
                 }

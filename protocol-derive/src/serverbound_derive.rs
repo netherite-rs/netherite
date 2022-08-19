@@ -17,7 +17,6 @@ pub fn derive_serverbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                 "VarInt" => t.push(m_name("varint", &field_name).into()),
                 "VarLong" => t.push(m_name("varlong", &field_name).into()),
                 "String" => t.push(m_name("utf8", &field_name).into()),
-                "Blob" => t.push(m_name("blob", &field_name).into()),
                 "bool" => t.push(m_name("bool", &field_name).into()),
                 type_name => {
                     match type_name {

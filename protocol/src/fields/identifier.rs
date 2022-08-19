@@ -18,11 +18,11 @@ pub struct Key {
 }
 
 impl Key {
-    pub fn minecraft(value: String) -> Self {
-        Self::new(String::from(MINECRAFT), value)
+    pub fn minecraft(value: &str) -> Self {
+        Self::new(MINECRAFT, value)
     }
 
-    pub fn new(namespace: String, value: String) -> Self {
+    pub fn new(namespace: &str, value: &str) -> Self {
         if !NAMESPACE_REGEX.is_match(&namespace) {
             panic!("Namespace '{}' can only contain lowercase alphabet, underscores, dots, dashes and numbers.", namespace)
         }
@@ -33,10 +33,10 @@ impl Key {
         if string.len() >= 256 {
             panic!("Identifiers must be less than 256 characters")
         }
-        Self { namespace, value }
+        Self { namespace: namespace.to_string(), value: value.to_string() }
     }
 
-    pub fn parse(string: &String) -> Result<Key> {
+    pub fn parse(string: &str) -> Result<Key> {
         if string.len() >= 256 {
             return Err(Error::new(
                 ErrorKind::InvalidData,
@@ -60,7 +60,7 @@ impl Key {
             );
         }
 
-        Ok(Key::new(split.0.to_string(), split.1.to_string()))
+        Ok(Key::new(split.0, split.1))
     }
 
     pub fn namespace(&self) -> &str {

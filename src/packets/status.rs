@@ -14,13 +14,13 @@ pub struct PingRequest {
     pub payload: i64,
 }
 
-#[derive(Clientbound)]
+#[derive(Clientbound, Debug)]
 #[packet(id = 0x00)]
 pub struct StatusResponse {
     pub response: Json<Response>,
 }
 
-#[derive(Clientbound)]
+#[derive(Clientbound, Debug)]
 #[packet(id = 0x01)]
 pub struct PingResponse {
     pub payload: i64,

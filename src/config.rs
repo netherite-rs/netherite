@@ -2,9 +2,8 @@ use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use rustc_serialize::base64::{ToBase64, MIME};
-use rustc_serialize::hex::{ToHex};
 
+use rustc_serialize::base64::{MIME, ToBase64};
 use serde::Deserialize;
 use toml::de::Error;
 
@@ -20,6 +19,7 @@ pub struct ServerSection {
     address: String,
     port: u32,
     online_mode: bool,
+    compression_threshold: u32,
 }
 
 #[derive(Deserialize, Debug)]
@@ -48,7 +48,6 @@ impl StatusSection {
         let mut vec = Vec::new();
         let _ = file.read_to_end(&mut vec);
         let base64 = vec.to_base64(MIME);
-        let hex = vec.to_hex();
         return format!("data:image/png;base64,{}", base64.replace("\r\n", ""));
     }
 }
@@ -64,6 +63,10 @@ impl ServerSection {
 
     pub fn online_mode(&self) -> bool {
         self.online_mode
+    }
+
+    pub fn compression_threshold(&self) -> u32 {
+        self.compression_threshold
     }
 }
 

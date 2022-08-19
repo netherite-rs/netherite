@@ -4,9 +4,9 @@ use lazy_static::lazy_static;
 use protocol::fields::identifier::Key;
 
 lazy_static! {
-    static ref UNIFORM_FONT: Key = Key::minecraft(String::from("uniform"));
-    static ref ALT_FONT: Key = Key::minecraft(String::from("alt"));
-    static ref DEFAULT_FONT: Key = Key::minecraft(String::from("default"));
+    static ref UNIFORM_FONT: Key = Key::minecraft("uniform");
+    static ref ALT_FONT: Key = Key::minecraft("alt");
+    static ref DEFAULT_FONT: Key = Key::minecraft("default");
 }
 
 /// Represents a color that can be represented in a [TextComponent].

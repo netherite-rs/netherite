@@ -170,6 +170,7 @@ mod tests {
 
     #[test]
     fn test_compression() {
+        println!("{}", VarInt(0).size());
         let packet = HandshakePacket {
             protocol_version: VarInt(655),
             server_address: "127.0.0.1".to_string(),

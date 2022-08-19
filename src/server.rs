@@ -51,7 +51,7 @@ impl Server {
 
                     let stage = client_codec.stage();
                     match stage {
-                        ProtocolStage::Handshake => client_codec.handle_handshake_packet(id, &mut data, server.deref()).await,
+                        ProtocolStage::Handshake => client_codec.handle_handshake_packet(id, &mut data).await,
                         ProtocolStage::Status => client_codec.handle_status_packet(id, &mut data, server.deref()).await,
                         ProtocolStage::Login => client_codec.handle_login_packet(id, &mut data, server.deref()).await,
                         ProtocolStage::Play => client_codec.handle_play_packet(id, &mut data, server.deref()).await,

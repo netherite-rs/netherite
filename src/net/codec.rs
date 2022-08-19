@@ -1,23 +1,28 @@
-use std::borrow::Borrow;
+use std::fmt::Debug;
 use std::io::Result;
-use std::ops::Deref;
-use std::rc::Rc;
-use std::sync::Arc;
 
+use aes::Aes128;
 use bytebuffer::ByteBuffer;
 use bytes::{Buf, BytesMut};
 use cfb8::{Decryptor, Encryptor};
 use cfb8::cipher::{AsyncStreamCipher, KeyIvInit};
+use rsa::pkcs1::EncodeRsaPrivateKey;
+use rsa::RsaPublicKey;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
 use protocol::bound::Clientbound;
 use protocol::compression::{read_packet, write_packet};
+use protocol::fields::numeric::VarInt;
 use protocol::fields::profile::GameProfile;
+use crate::net::encryption::EncryptionData;
 
-use crate::net::crypto::Crypto;
 use crate::net::handler::PacketHandler;
+use crate::packets::login::SetCompressionPacket;
 use crate::Server;
+
+type EncryptAes128 = Encryptor<Aes128>;
+type DecryptAes128 = Decryptor<Aes128>;
 
 /// A client codec is responsible for writing clientbound packets
 /// to a TCP stream, with optional compression.
@@ -25,13 +30,14 @@ pub struct ClientCodec {
     threshold: Option<i32>,
     stage: ProtocolStage,
     conn: TcpStream,
-    encryption: Option<Crypto>,
+    encryption: Option<EncryptionData>,
     player_name: Option<String>,
-    profile: Option<GameProfile>
+    profile: Option<GameProfile>,
+    public_key: Option<RsaPublicKey>,
 }
 
 impl ClientCodec {
-    pub async fn handle_handshake_packet(&mut self, id: i32, data: &mut ByteBuffer, server: &Server) {
+    pub async fn handle_handshake_packet(&mut self, id: i32, data: &mut ByteBuffer) {
         PacketHandler::handle_handshake_packet(self, id, data).await;
     }
 
@@ -63,30 +69,25 @@ impl ClientCodec {
             conn,
             encryption: None,
             player_name: None,
-            profile: None
+            profile: None,
+            public_key: None,
         }
-    }
-
-    pub fn threshold(&self) -> Option<i32> {
-        self.threshold
     }
 
     pub fn stage(&self) -> &ProtocolStage {
         &self.stage
     }
 
-    pub fn conn(&self) -> &TcpStream {
-        &self.conn
+    pub async fn enable_compression(&mut self, threshold: u32) {
+        self.write_packet(&SetCompressionPacket {
+            threshold: VarInt(threshold as i32)
+        }).await.unwrap();
+        self.threshold = Some(threshold as i32);
     }
 
-    pub fn set_threshold(&mut self, threshold: i32) {
-        self.threshold = Some(threshold);
-    }
-
-    pub async fn write_packet(&mut self, packet: &impl Clientbound) -> Result<()> {
+    pub async fn write_packet(&mut self, packet: &(impl Clientbound + Debug)) -> Result<()> {
         let mut buf: Vec<u8> = Vec::new();
         write_packet(packet, &mut buf, self.threshold.unwrap_or(-1))?;
-
         if self.encryption().is_some() {
             self.encrypt(buf.as_mut_slice());
         }
@@ -116,27 +117,20 @@ impl ClientCodec {
             .map(|t| Some(t))
     }
 
-    pub fn set_encryption(&mut self, shared_secret: [u8; 16]) {
-        let key = &shared_secret.into();
-        self.encryption = Some(Crypto {
-            shared_secret,
-            encryptor: Arc::new(Encryptor::new(key, key)),
-            decryptor: Arc::new(Decryptor::new(key, key)),
-        });
+    pub fn enable_encryption(&mut self, shared_secret: [u8; 16]) {
+        self.encryption = Some(EncryptionData::new(shared_secret));
     }
 
-    pub fn encryption(&self) -> &Option<Crypto> {
-        &self.encryption
+    pub fn encrypt(&mut self, buf: &mut [u8]) {
+        self.encryption.as_mut().unwrap().encrypt(buf);
+        // let key = self.shared_secret.as_ref().unwrap().as_slice();
+        // EncryptAes128::new_from_slices(key, key).unwrap().encrypt(buf);
     }
 
-    pub fn encrypt(&self, buf: &mut [u8]) {
-        let encryptor = self.encryption.as_ref().unwrap().encryptor.clone();
-        encryptor.deref().clone().encrypt(buf)
-    }
-
-    pub fn decrypt(&self, buf: &mut [u8]) {
-        let decryptor = self.encryption.as_ref().unwrap().decryptor.clone();
-        decryptor.deref().clone().decrypt(buf)
+    pub fn decrypt(&mut self, buf: &mut [u8]) {
+        self.encryption.as_mut().unwrap().decrypt(buf);
+        // let key = self.shared_secret.as_ref().unwrap().as_slice();
+        // DecryptAes128::new_from_slices(key, key).unwrap().decrypt(buf);
     }
 
     pub fn player_name(&self) -> &Option<String> {
@@ -147,11 +141,19 @@ impl ClientCodec {
         self.player_name = player_name;
     }
 
-    pub fn profile(&self) -> &Option<GameProfile> {
-        &self.profile
-    }
-    
     pub fn set_profile(&mut self, profile: Option<GameProfile>) {
         self.profile = profile;
+    }
+
+    pub fn public_key(&self) -> &Option<RsaPublicKey> {
+        &self.public_key
+    }
+
+    pub fn set_public_key(&mut self, public_key: Option<RsaPublicKey>) {
+        self.public_key = public_key;
+    }
+
+    pub fn encryption(&self) -> &Option<EncryptionData> {
+        &self.encryption
     }
 }
