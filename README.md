@@ -25,6 +25,7 @@ Netherite implements the protocol of **Minecraft 1.19.2**, and is still under he
 - [ ] Entity component system
 - [ ] A suitable NBT framework
 - [ ] Plugin API
+- [ ] A powerful, user-friendly CLI for controlling the server, installing extensions, etc.
 
 ## Goals
 1. A stable, powerful, possibly cross-version implementation of Minecraft's protocol, NBT system, chunks, and other game-related formats
