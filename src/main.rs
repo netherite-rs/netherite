@@ -17,16 +17,13 @@ mod game_mode;
 
 #[tokio::main]
 async fn main() {
-    let properties = match ServerProperties::read(&Path::new("server.toml")) {
-        Ok(v) => v,
-        Err(why) => {
-            eprintln!("Error parsing server.toml: {}", why.to_string());
-            return;
-        }
-    };
-
-    let server = Server::new(properties).await;
-    Server::start(Arc::new(server)).await;
+    let properties = ServerProperties::read(&Path::new("../run/server.toml"));
+    if let Ok(properties) = properties {
+        let server = Server::new(properties).await;
+        Server::start(Arc::new(server)).await;
+    } else {
+        eprintln!("Error parsing server.toml: {}", properties.err().unwrap().to_string());
+    }
 }
 
 // fn main() {
