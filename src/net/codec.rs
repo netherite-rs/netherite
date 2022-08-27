@@ -1,4 +1,7 @@
 use std::io::{Error, ErrorKind, Result};
+use std::thread;
+use std::thread::Thread;
+use std::time::Duration;
 
 use bytes::{Buf, BytesMut};
 use rsa::RsaPublicKey;
@@ -6,6 +9,7 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
 use bytebuffer::ByteBuffer;
+use chat::text_component::TextComponent;
 use protocol::{Clientbound, Serverbound};
 use protocol::compression::{read_packet, write_packet};
 use protocol::fields::numeric::VarInt;
@@ -13,7 +17,8 @@ use protocol::fields::profile::GameProfile;
 
 use crate::encryption::client::ClientEncryption;
 use crate::net::handler::PacketHandler;
-use crate::packets::login::SetCompressionPacket;
+use crate::packets::login::{DisconnectLogin, SetCompressionPacket};
+use crate::packets::play::DisconnectPlay;
 use crate::Server;
 
 /// A client codec is responsible for writing clientbound packets
@@ -75,6 +80,16 @@ impl ClientCodec {
             threshold: VarInt(threshold as i32)
         }).await.unwrap();
         self.threshold = Some(threshold as i32);
+    }
+
+    pub async fn disconnect(&mut self, reason: &str) {
+        let reason = TextComponent::plain(reason);
+        match self.stage {
+            ProtocolStage::Login => self.write_packet(&DisconnectLogin { reason }).await.unwrap(),
+            ProtocolStage::Play => self.write_packet(&DisconnectPlay { reason }).await.unwrap(),
+            _ => {}
+        }
+        self.conn.shutdown().await.unwrap();
     }
 
     pub async fn write_packet<T: Clientbound>(&mut self, packet: &T) -> Result<()> {
