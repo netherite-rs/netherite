@@ -10,7 +10,6 @@ use crate::packets::login;
 use crate::packets::status;
 use crate::Server;
 
-/// generated code
 pub struct PacketHandler;
 
 impl PacketHandler {

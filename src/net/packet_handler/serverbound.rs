@@ -169,7 +169,7 @@ pub(crate) async fn handle_status_request(_: &StatusRequest, codec: &mut ClientC
             .text(server.properties().status().motd().to_string())
             .color(&RgbColor::new(230, 47, 70))
             .build(),
-        favicon: Some(server.properties().status().read_icon()),
+        favicon: Some(server.properties().status().read_icon(server.run_directory())),
         previews_chat: true,
     };
     codec.write_packet(&StatusResponse {

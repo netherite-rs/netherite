@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use tokio::net::TcpListener;
@@ -13,16 +14,16 @@ pub struct Server {
     listener: TcpListener,
     properties: ServerProperties,
     encryption: ServerEncryption,
+    run_directory: PathBuf,
 }
 
 impl Server {
+    
     pub async fn finish_login(&self, client: &mut ClientCodec) {
         client.set_stage(ProtocolStage::Play);
     }
-}
-
-impl Server {
-    pub async fn new(properties: ServerProperties) -> Self {
+    
+    pub async fn new(run_directory: PathBuf, properties: ServerProperties) -> Self {
         let address = format!("{}:{}", properties.server().address(), properties.server().port());
         let listener = TcpListener::bind(address)
             .await
@@ -32,6 +33,7 @@ impl Server {
             listener,
             properties,
             encryption: ServerEncryption::new(),
+            run_directory,
         }
     }
 
@@ -70,8 +72,11 @@ impl Server {
         &self.properties
     }
 
+    pub fn run_directory(&self) -> &PathBuf {
+        &self.run_directory
+    }
+
     pub fn encryption(&self) -> &ServerEncryption {
         &self.encryption
     }
 }
-
