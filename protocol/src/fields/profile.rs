@@ -15,6 +15,29 @@ pub struct GameProfile {
     pub properties: Vec<Property>,
 }
 
+impl GameProfile {
+    pub fn new(name: String, id: Uuid) -> Self {
+        Self { name, id, properties: vec![] }
+    }
+
+    pub fn offline(name: &str) -> Self {
+        GameProfile {
+            name: name.to_string(),
+            id: GameProfile::offline_mode_uuid(name),
+            properties: vec![],
+        }
+    }
+
+    fn offline_mode_uuid(username: &str) -> Uuid {
+        let digest = md5::compute(format!("OfflinePlayer:{}", username).as_bytes());
+        let mut builder = uuid::Builder::from_bytes(digest.try_into().unwrap());
+        builder
+            .set_variant(uuid::Variant::RFC4122)
+            .set_version(uuid::Version::Md5);
+        builder.into_uuid()
+    }
+}
+
 impl PacketField for GameProfile {
     fn read_field<R: Read>(input: &mut R) -> std::io::Result<Self> where Self: Sized {
         let id: Uuid = input.read_field()?;

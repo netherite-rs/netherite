@@ -7,10 +7,25 @@ use rustc_serialize::base64::{MIME, ToBase64};
 use serde::Deserialize;
 use toml::de::Error;
 
+use crate::game_mode::GameMode;
+
 #[derive(Deserialize, Debug)]
 pub struct ServerProperties {
     server: ServerSection,
     status: StatusSection,
+    game: GameSection,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "kebab-case")]
+pub struct GameSection {
+    default_gamemode: GameMode,
+}
+
+impl GameSection {
+    pub fn default_gamemode(&self) -> &GameMode {
+        &self.default_gamemode
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -39,7 +54,7 @@ impl StatusSection {
         self.max_players
     }
 
-    pub fn icon(&self) -> &str {
+    pub fn icon_path(&self) -> &str {
         &self.icon
     }
 
@@ -82,5 +97,9 @@ impl ServerProperties {
 
     pub fn status(&self) -> &StatusSection {
         &self.status
+    }
+
+    pub fn game(&self) -> &GameSection {
+        &self.game
     }
 }

@@ -43,7 +43,7 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                     Ok(size)
                 }
 
-                fn id(&self) -> i32 {
+                fn id() -> i32 {
                     #id
                 }
             }

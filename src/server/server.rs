@@ -1,40 +1,49 @@
 use std::ops::Deref;
 use std::sync::Arc;
 
-use bytebuffer::ByteBuffer;
 use tokio::net::TcpListener;
+use tokio::sync::RwLock;
 
-use net::codec::ClientCodec;
+use bytebuffer::ByteBuffer;
 
-use crate::config::ServerProperties;
-use crate::encryption::encryption::EncryptionHandler;
-use crate::net;
-use crate::net::codec::ProtocolStage;
+use crate::encryption::server::ServerEncryption;
+use crate::net::codec::{ClientCodec, ProtocolStage};
+use crate::server::player_handler::PlayerHandler;
+use crate::ServerProperties;
 
 pub struct Server {
     listener: TcpListener,
     properties: ServerProperties,
-    encryption: EncryptionHandler,
+    player_handler: RwLock<PlayerHandler>,
+    encryption: ServerEncryption,
 }
 
 impl Server {
-    pub async fn new(properties: ServerProperties) -> Server {
+    pub async fn finish_login(&self, client: &mut ClientCodec) {
+
+    }
+}
+
+impl Server {
+    pub async fn new(properties: ServerProperties) -> Self {
         let address = format!("{}:{}", properties.server().address(), properties.server().port());
-        let listener = TcpListener::bind(address).await
+        let listener = TcpListener::bind(address)
+            .await
             .expect(&*format!("failed to bind to port {} because it is already in use.", properties.server().port()));
-        Server {
+
+        Self {
             listener,
             properties,
-            encryption: EncryptionHandler::new(),
+            player_handler: RwLock::new(PlayerHandler {}),
+            encryption: ServerEncryption::new(),
         }
     }
 
     pub async fn start(server: Arc<Self>) {
         loop {
             let server = server.clone();
-            let (socket, _) = server.listener.accept().await.unwrap(); // <------- code never reaches this
+            let (socket, _) = server.listener.accept().await.unwrap();
             tokio::spawn(async move {
-                // let server = server; // move inside
                 let mut client_codec = ClientCodec::new(socket);
                 loop {
                     let rs = client_codec.read_next_packet().await;
@@ -47,7 +56,7 @@ impl Server {
                         return;
                     }
                     let (id, data) = read.unwrap();
-                    let mut data = ByteBuffer::from_bytes(data.as_slice());
+                    let mut data = ByteBuffer::from_vec(data);
 
                     let stage = client_codec.stage();
                     match stage {
@@ -65,7 +74,12 @@ impl Server {
         &self.properties
     }
 
-    pub fn encryption(&self) -> &EncryptionHandler {
+    pub fn player_handler(&self) -> &RwLock<PlayerHandler> {
+        &self.player_handler
+    }
+
+    pub fn encryption(&self) -> &ServerEncryption {
         &self.encryption
     }
 }
+

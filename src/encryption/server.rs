@@ -2,19 +2,19 @@ use rand::Rng;
 use rsa::{errors::Result, PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey};
 use rsa::pkcs8::EncodePublicKey;
 
-pub struct EncryptionHandler {
+pub struct ServerEncryption {
     private_key: RsaPrivateKey,
     public_key: RsaPublicKey,
     verify_token: Vec<u8>,
 }
 
-impl EncryptionHandler {
-    pub fn new() -> EncryptionHandler {
+impl ServerEncryption {
+    pub fn new() -> ServerEncryption {
         let mut rng = rand::thread_rng();
         let private_key = RsaPrivateKey::new(&mut rng, 1024).expect("failed to generate a key");
         let public_key = RsaPublicKey::from(&private_key);
         let verify_token = rand::thread_rng().gen::<[u8; 4]>().to_vec();
-        EncryptionHandler {
+        ServerEncryption {
             private_key,
             public_key,
             verify_token,
@@ -38,8 +38,7 @@ impl EncryptionHandler {
         self.verify_token.to_vec()
     }
 
-    // TODO: consider passing token as a ref
-    pub fn compare_verify_tokens(&self, token: Vec<u8>) -> bool {
-        self.verify_token == token
+    pub fn compare_verify_tokens(&self, token: &Vec<u8>) -> bool {
+        &self.verify_token == token
     }
 }

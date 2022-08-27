@@ -4,10 +4,10 @@ use std::io::Write;
 
 pub trait Serverbound {
     fn read_packet(input: &mut impl Read) -> Self;
-    fn id(&self) -> i32;
+    fn id() -> i32;
 }
 
 pub trait Clientbound {
     fn write_packet(&self, output: &mut impl Write) -> Result<usize>;
-    fn id(&self) -> i32;
+    fn id() -> i32;
 }

@@ -1,4 +1,5 @@
-pub mod encryption;
+pub mod server;
+pub mod client;
 
 
 #[cfg(test)]
@@ -17,7 +18,7 @@ mod tests {
     use protocol::fields::numeric::VarInt;
     use protocol::fields::position::Position;
     use protocol::bound::{Serverbound};
-    use crate::encryption::encryption::EncryptionHandler;
+    use crate::encryption::server::ServerEncryption;
     use crate::packets::login::LoginPlay;
 
     type EncryptAes128 = Encryptor<Aes128>;
@@ -26,7 +27,7 @@ mod tests {
     #[test]
     fn encrypt() {
         let data = b"i am an exceptionally good boy".to_vec();
-        let encryption_handler = EncryptionHandler::new();
+        let encryption_handler = ServerEncryption::new();
         let encrypted = encryption_handler.encrypt(&data).unwrap();
 
         let decrypted = encryption_handler.decrypt(&encrypted).unwrap();
@@ -76,8 +77,6 @@ mod tests {
         DecryptAes128::new(key, key).decrypt(&mut buf);
         let read_packet = read_compressed_packet(&mut buf.reader()).unwrap().1;
         let read = LoginPlay::read_packet(&mut read_packet.reader());
-        println!("read  : {:?}", read);
-        println!("actual: {:?}", packet);
         assert_eq!(buf.to_vec(), original);
     }
 }

@@ -8,9 +8,9 @@ use protocol_derive::{Clientbound, Serverbound};
 #[packet(id = 0x00)]
 pub struct StatusRequest {}
 
-#[derive(Serverbound)]
+#[derive(Serverbound, Clientbound)]
 #[packet(id = 0x01)]
-pub struct PingRequest {
+pub struct PingPacket {
     pub payload: i64,
 }
 
@@ -18,12 +18,6 @@ pub struct PingRequest {
 #[packet(id = 0x00)]
 pub struct StatusResponse {
     pub response: Json<Response>,
-}
-
-#[derive(Clientbound, Debug)]
-#[packet(id = 0x01)]
-pub struct PingResponse {
-    pub payload: i64,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

@@ -144,7 +144,7 @@ mod tests {
             Ok(size)
         }
 
-        fn id(&self) -> i32 {
+        fn id() -> i32 {
             0x00
         }
     }
@@ -163,8 +163,8 @@ mod tests {
             }
         }
 
-        fn id(&self) -> i32 {
-            0i32
+        fn id() -> i32 {
+            0x00
         }
     }
 
@@ -183,10 +183,10 @@ mod tests {
 
         let (id, data) = read_compressed_packet(&mut buffer).unwrap();
 
-        let mut buffer = ByteBuffer::from_bytes(data.as_slice());
+        let mut buffer = ByteBuffer::from_vec(data);
         let read = HandshakePacket::read_packet(&mut buffer);
 
-        assert_eq!(id, Clientbound::id(&packet));
+        assert_eq!(id, 0x00);
         assert_eq!(read, packet);
     }
 }

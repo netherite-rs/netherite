@@ -64,7 +64,7 @@ impl protocol::bound::Serverbound for EncryptionResponse {
             message_signature: if !has_verify_token { input.read_field().expect("failed to read message_signature") } else { None },
         }
     }
-    fn id(&self) -> i32 { 0x01 }
+    fn id() -> i32 { 0x01 }
 }
 
 #[derive(Clientbound, Serverbound, Debug)]

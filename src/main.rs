@@ -1,21 +1,20 @@
 extern crate core;
 
-
 use std::path::Path;
 use std::sync::Arc;
 
 use crate::config::ServerProperties;
-use crate::server::Server;
+use crate::server::server::Server;
 
-mod server;
 mod packets;
 mod net;
 mod encryption;
-pub mod config;
+mod config;
 mod entity;
 mod dimension;
 mod world;
-mod util;
+mod server;
+mod game_mode;
 
 #[tokio::main]
 async fn main() {

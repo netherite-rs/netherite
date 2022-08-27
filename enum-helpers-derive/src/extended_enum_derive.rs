@@ -58,7 +58,7 @@ pub fn derive_named(ast: DeriveInput) -> TokenStream {
         for x in variants {
             let variant_name = x.ident;
             from_name_tokens.push(quote! {
-               stringify!(#variant_name) => #name::#variant_name,
+               stringify!(#variant_name) => Ok(#name::#variant_name),
             });
             get_name_tokens.push(quote! {
                 #name::#variant_name => stringify!(#variant_name),

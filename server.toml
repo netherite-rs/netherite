@@ -8,3 +8,6 @@ online-mode = true
 motd = "Welcome to netherite-rs!"
 max-players = 100
 icon = "server-icon.png"
+
+[game]
+default-gamemode = "adventure"

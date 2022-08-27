@@ -1,4 +1,3 @@
-use std::fmt::Debug;
 use std::io::{Error, ErrorKind, Read, Result, Write};
 
 use flate2::Compression;
@@ -55,7 +54,7 @@ pub fn read_uncompressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)>
     Ok((packet_id.0, buf))
 }
 
-pub fn write_packet(packet: &(impl Clientbound + Debug), output: &mut impl Write, threshold: i32) -> Result<()> {
+pub fn write_packet<T: Clientbound>(packet: &T, output: &mut impl Write, threshold: i32) -> Result<()> {
     if threshold >= 0 {
         write_compressed_packet(packet, output, threshold)
     } else {
@@ -63,8 +62,8 @@ pub fn write_packet(packet: &(impl Clientbound + Debug), output: &mut impl Write
     }
 }
 
-pub fn write_uncompressed_packet(packet: &(impl Clientbound + Debug), output: &mut impl Write) -> Result<()> {
-    let id = VarInt(packet.id());
+pub fn write_uncompressed_packet<T: Clientbound>(packet: &T, output: &mut impl Write) -> Result<()> {
+    let id = VarInt(T::id());
     let mut length = id.size();
 
     let mut buf = Vec::new();
@@ -77,8 +76,8 @@ pub fn write_uncompressed_packet(packet: &(impl Clientbound + Debug), output: &m
     Ok(())
 }
 
-pub fn write_compressed_packet(packet: &(impl Clientbound + Debug), output: &mut impl Write, threshold: i32) -> Result<()> {
-    let id = VarInt(packet.id());
+pub fn write_compressed_packet<T: Clientbound>(packet: &T, output: &mut impl Write, threshold: i32) -> Result<()> {
+    let id = VarInt(T::id());
 
     let mut uncompressed_data = Vec::new();
     uncompressed_data.write_varint(&id)?;
