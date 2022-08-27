@@ -2,25 +2,22 @@ use std::ops::Deref;
 use std::sync::Arc;
 
 use tokio::net::TcpListener;
-use tokio::sync::RwLock;
 
 use bytebuffer::ByteBuffer;
 
 use crate::encryption::server::ServerEncryption;
 use crate::net::codec::{ClientCodec, ProtocolStage};
-use crate::server::player_handler::PlayerHandler;
 use crate::ServerProperties;
 
 pub struct Server {
     listener: TcpListener,
     properties: ServerProperties,
-    player_handler: RwLock<PlayerHandler>,
     encryption: ServerEncryption,
 }
 
 impl Server {
     pub async fn finish_login(&self, client: &mut ClientCodec) {
-
+        client.set_stage(ProtocolStage::Play);
     }
 }
 
@@ -34,7 +31,6 @@ impl Server {
         Self {
             listener,
             properties,
-            player_handler: RwLock::new(PlayerHandler {}),
             encryption: ServerEncryption::new(),
         }
     }
@@ -72,10 +68,6 @@ impl Server {
 
     pub fn properties(&self) -> &ServerProperties {
         &self.properties
-    }
-
-    pub fn player_handler(&self) -> &RwLock<PlayerHandler> {
-        &self.player_handler
     }
 
     pub fn encryption(&self) -> &ServerEncryption {

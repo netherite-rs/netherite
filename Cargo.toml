@@ -4,15 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serde = { version = "1.0.140", features = ["derive"] }
 tokio = { version = "1.20.1", features = ["full"] }
 uuid = { version = "1.1.2", features = ["v3", "serde", "v4", "fast-rng", "macro-diagnostics"] }
+serde = { version = "1.0.140", features = ["derive"] }
 
-protocol = { path = "protocol" }
-protocol-derive = { path = "protocol-derive" }
+protocol = { path = "protocol", features = ["derive"] }
+enum_utils = { path = "enum_utils", features = ["derive"] }
 chat = { path = "chat" }
-enum-helpers = { path = "enum-helpers" }
-enum-helpers-derive = { path = "enum-helpers-derive" }
 
 serde_json = "1.0.83"
 hematite-nbt = "0.5.2"
@@ -33,3 +31,4 @@ reqwest = { version = "0.11", features = ["json"] }
 sha-1 = "0.10.0"
 num-bigint = "0.4.3"
 flume = "0.10.14"
+derive-getters = "0.2.0"

@@ -10,7 +10,6 @@ mod packets;
 mod net;
 mod encryption;
 mod config;
-mod entity;
 mod dimension;
 mod world;
 mod server;

@@ -33,7 +33,7 @@ pub fn derive_serverbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
             }
         }
         let output = quote! {
-            impl protocol::bound::Serverbound for #name {
+            impl protocol::Serverbound for #name {
                 fn read_packet(input: &mut impl std::io::Read) -> #name {
                     #name {
                         #(#t)*

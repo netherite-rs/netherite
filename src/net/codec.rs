@@ -1,14 +1,12 @@
 use std::io::{Error, ErrorKind, Result};
 
-use aes::Aes128;
-use bytebuffer::ByteBuffer;
 use bytes::{Buf, BytesMut};
-use cfb8::{Decryptor, Encryptor};
 use rsa::RsaPublicKey;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
-use protocol::bound::{Clientbound, Serverbound};
+use bytebuffer::ByteBuffer;
+use protocol::{Clientbound, Serverbound};
 use protocol::compression::{read_packet, write_packet};
 use protocol::fields::numeric::VarInt;
 use protocol::fields::profile::GameProfile;

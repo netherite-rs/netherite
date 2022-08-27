@@ -4,7 +4,7 @@ use std::io::{Error, ErrorKind, Read, Result, Write};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-use enum_helpers::OrdinalEnum;
+use enum_utils::OrdinalEnum;
 
 use crate::fields::numeric::VarInt;
 use crate::fields::PacketField;

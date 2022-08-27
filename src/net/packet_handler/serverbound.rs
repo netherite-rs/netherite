@@ -57,7 +57,7 @@ pub(crate) async fn handle_encryption_response(
         server.properties().server().address(),
     ).await;
 
-    codec.enable_compression(server.properties().server().compression_threshold()).await;
+    codec.enable_compression(*server.properties().server().compression_threshold()).await;
 
     let success = LoginSuccess { profile };
     codec.write_packet(&success).await.unwrap();
@@ -129,14 +129,14 @@ pub(crate) async fn handle_login_start(packet: LoginStart, codec: &mut ClientCod
     let public_key = packet.public_key.unwrap();
     let public_key = RsaPublicKey::from_public_key_der(public_key.as_slice()).unwrap();
     codec.set_public_key(Some(public_key));
-    if server.properties().server().online_mode() {
+    if *server.properties().server().online_mode() {
         codec.write_packet(&EncryptionRequest {
             server_id: "".to_string(),
             public_key: server.encryption().public_key_encoded(),
             verify_token: server.encryption().verify_token(),
         }).await.unwrap();
     } else {
-        codec.enable_compression(server.properties().server().compression_threshold()).await;
+        codec.enable_compression(*server.properties().server().compression_threshold()).await;
         let success = LoginSuccess { profile: GameProfile::offline(&name) };
         codec.write_packet(&success).await.unwrap();
         codec.set_profile(Some(success.profile));
@@ -156,7 +156,7 @@ pub(crate) async fn handle_status_request(_: &StatusRequest, codec: &mut ClientC
             protocol: 760,
         },
         players: RespPlayers {
-            max: server.properties().status().max_players(),
+            max: *server.properties().status().max_players(),
             online: 5,
             sample: vec![
                 RespPlayerSample {

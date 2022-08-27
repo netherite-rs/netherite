@@ -2,7 +2,7 @@
 use serde::{Serialize, Deserialize};
 use chat::text_component::TextComponent;
 use protocol::fields::generic::Json;
-use protocol_derive::{Clientbound, Serverbound};
+use protocol::{Clientbound, Serverbound};
 
 #[derive(Serverbound)]
 #[packet(id = 0x00)]

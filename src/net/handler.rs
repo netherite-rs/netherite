@@ -1,6 +1,6 @@
 use bytebuffer::ByteBuffer;
 
-use protocol::bound::Serverbound;
+use protocol::Serverbound;
 
 use crate::net::codec::ClientCodec;
 use crate::net::packet_handler::serverbound;

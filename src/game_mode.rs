@@ -2,7 +2,7 @@ use std::fmt::Formatter;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde::de::{Error, Visitor};
 
-use enum_helpers_derive::{NamedEnum, OrdinalEnum};
+use enum_utils::{NamedEnum, OrdinalEnum};
 
 #[derive(NamedEnum, OrdinalEnum, Debug)]
 pub enum GameMode {

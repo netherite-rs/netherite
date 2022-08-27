@@ -16,5 +16,10 @@ serde = "1.0.141"
 serde_json = "1.0.82"
 md5 = "0.7.0"
 
-protocol-derive = { path = "../protocol-derive" }
-enum-helpers = { path = "../enum-helpers" }
+protocol_derive = { path = "protocol_derive", optional = true }
+enum_utils = { path = "../enum_utils" }
+
+[features]
+default = []
+
+derive = ["protocol_derive"]

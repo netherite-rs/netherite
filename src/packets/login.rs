@@ -5,7 +5,7 @@ use protocol::fields::numeric::VarInt;
 use protocol::fields::position::Position;
 use protocol::fields::profile::GameProfile;
 use protocol::packet_io::PacketReaderExt;
-use protocol_derive::{Clientbound, Serverbound};
+use protocol::{Clientbound, Serverbound};
 
 #[derive(Serverbound, Debug)]
 #[packet(id = 0x00)]
@@ -52,7 +52,7 @@ pub struct EncryptionResponse {
     pub message_signature: Option<Vec<u8>>,
 }
 
-impl protocol::bound::Serverbound for EncryptionResponse {
+impl protocol::Serverbound for EncryptionResponse {
     fn read_packet(input: &mut impl std::io::Read) -> EncryptionResponse {
         let shared_secret = input.read_field::<Vec<u8>>().expect("failed to read shared_secret");
         let has_verify_token = input.read_bool().expect("failed to read has_verify_token");

@@ -17,7 +17,7 @@ mod tests {
     use protocol::fields::identifier::Key;
     use protocol::fields::numeric::VarInt;
     use protocol::fields::position::Position;
-    use protocol::bound::{Serverbound};
+    use protocol::{Serverbound};
     use crate::encryption::server::ServerEncryption;
     use crate::packets::login::LoginPlay;
 

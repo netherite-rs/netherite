@@ -36,7 +36,7 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
             }
         }
         let output = quote! {
-            impl protocol::bound::Clientbound for #name {
+            impl protocol::Clientbound for #name {
                 fn write_packet(&self, output: &mut impl std::io::Write) -> std::io::Result<usize> {
                     let mut size: usize = 0;
                     #(#t)*

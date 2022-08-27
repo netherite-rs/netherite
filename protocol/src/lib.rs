@@ -1,17 +1,37 @@
 extern crate core;
+// Re-export as #[derive(Clientbound, Serverbound)].
+#[cfg(feature = "protocol_derive")]
+#[allow(unused_imports)]
+#[macro_use]
+extern crate protocol_derive;
+
+use std::io::{Read, Result, Write};
+
+#[cfg(feature = "protocol_derive")]
+#[doc(hidden)]
+pub use protocol_derive::*;
 
 pub mod packet_io;
-pub mod bound;
 pub mod fields;
 pub mod compression;
 
+pub trait Serverbound {
+    fn read_packet(input: &mut impl Read) -> Self;
+    fn id() -> i32;
+}
+
+pub trait Clientbound {
+    fn write_packet(&self, output: &mut impl Write) -> Result<usize>;
+    fn id() -> i32;
+}
+
 #[cfg(test)]
 mod tests {
-    use bytebuffer::ByteBuffer;
     use uuid::{uuid, Uuid};
 
-    use crate::bound::{Clientbound, Serverbound};
+    use bytebuffer::ByteBuffer;
 
+    use crate::{Clientbound, Serverbound};
     use crate::compression::{read_compressed_packet, write_compressed_packet};
     use crate::fields::generic::Json;
     use crate::fields::numeric::{VarInt, VarLong};

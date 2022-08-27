@@ -24,7 +24,7 @@ pub fn derive_ordinal(ast: DeriveInput) -> TokenStream {
             index += 1;
         }
         let output = quote! {
-            impl enum_helpers::OrdinalEnum for #name {
+            impl enum_utils::OrdinalEnum for #name {
                 fn from_ordinal(ordinal: u32) -> Result<Self, String> where Self: Sized {
                     match ordinal {
                         #(#from_ordinal_tokens)*
@@ -65,7 +65,7 @@ pub fn derive_named(ast: DeriveInput) -> TokenStream {
             });
         }
         let output = quote! {
-            impl enum_helpers::NamedEnum for #name {
+            impl enum_utils::NamedEnum for #name {
                 fn from_name(name: &str) -> Result<Self, String> where Self: Sized {
                     match name {
                         #(#from_name_tokens)*

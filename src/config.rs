@@ -3,32 +3,27 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
+use derive_getters::Getters;
 use rustc_serialize::base64::{MIME, ToBase64};
 use serde::Deserialize;
 use toml::de::Error;
 
 use crate::game_mode::GameMode;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Getters)]
 pub struct ServerProperties {
     server: ServerSection,
     status: StatusSection,
     game: GameSection,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Getters)]
 #[serde(rename_all = "kebab-case")]
 pub struct GameSection {
     default_gamemode: GameMode,
 }
 
-impl GameSection {
-    pub fn default_gamemode(&self) -> &GameMode {
-        &self.default_gamemode
-    }
-}
-
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Getters)]
 #[serde(rename_all = "kebab-case")]
 pub struct ServerSection {
     address: String,
@@ -37,7 +32,7 @@ pub struct ServerSection {
     compression_threshold: u32,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Getters)]
 #[serde(rename_all = "kebab-case")]
 pub struct StatusSection {
     motd: String,
@@ -46,18 +41,6 @@ pub struct StatusSection {
 }
 
 impl StatusSection {
-    pub fn motd(&self) -> &str {
-        &self.motd
-    }
-
-    pub fn max_players(&self) -> usize {
-        self.max_players
-    }
-
-    pub fn icon_path(&self) -> &str {
-        &self.icon
-    }
-
     pub fn read_icon(&self) -> String {
         let mut file = File::open(&self.icon).unwrap();
         let mut vec = Vec::new();
@@ -67,39 +50,9 @@ impl StatusSection {
     }
 }
 
-impl ServerSection {
-    pub fn address(&self) -> &str {
-        &self.address
-    }
-
-    pub fn port(&self) -> u32 {
-        self.port
-    }
-
-    pub fn online_mode(&self) -> bool {
-        self.online_mode
-    }
-
-    pub fn compression_threshold(&self) -> u32 {
-        self.compression_threshold
-    }
-}
-
 impl ServerProperties {
     pub fn read(path: &Path) -> Result<ServerProperties, Error> {
         let string = fs::read_to_string(path).unwrap();
         toml::de::from_str(&string)
-    }
-
-    pub fn server(&self) -> &ServerSection {
-        &self.server
-    }
-
-    pub fn status(&self) -> &StatusSection {
-        &self.status
-    }
-
-    pub fn game(&self) -> &GameSection {
-        &self.game
     }
 }

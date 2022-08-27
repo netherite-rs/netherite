@@ -4,7 +4,7 @@ use flate2::Compression;
 use flate2::read::ZlibDecoder;
 use flate2::write::ZlibEncoder;
 
-use crate::bound::Clientbound;
+use crate::Clientbound;
 use crate::fields::numeric::VarInt;
 use crate::packet_io::{PacketReaderExt, PacketWriterExt};
 
