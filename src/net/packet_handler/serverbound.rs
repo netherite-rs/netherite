@@ -1,5 +1,7 @@
-use rsa::pkcs8::DecodePublicKey;
-use rsa::RsaPublicKey;
+use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
+use rsa::Hash::SHA2_256;
+use rsa::pkcs8::{DecodePublicKey};
+use sha2::{Digest, Sha256};
 
 use chat::style::RgbColor;
 use chat::text_component::TextComponent;
@@ -30,14 +32,14 @@ pub(crate) async fn handle_encryption_response(
 ) {
     let shared_secret = server.encryption().decrypt(&packet.shared_secret).unwrap();
     if !packet.has_verify_token {
-        // if !verify_salt(
-        //     packet.salt.unwrap(),
-        //     packet.message_signature.as_ref().unwrap(),
-        //     codec,
-        //     server,
-        // ) {
-        //     panic!("salt does not match.");
-        // }
+        if !verify_salt(
+            packet.salt.unwrap(),
+            packet.message_signature.as_ref().unwrap(),
+            codec,
+            server,
+        ) {
+            panic!("salt does not match!");
+        }
     } else {
         let verify_token = packet.verify_token.unwrap();
         let verify_token = server.encryption().decrypt(&verify_token).unwrap();
@@ -66,26 +68,15 @@ pub(crate) async fn handle_encryption_response(
     server.finish_login(codec).await;
 }
 
-// fn verify_salt(salt: i64, message_signature: &Vec<u8>, codec: &mut ClientCodec, server: &Server) -> bool {
-//     let public_key = codec.public_key().as_ref().unwrap();
-//     let document = public_key.to_public_key_der().unwrap();
-//     let key = document.as_ref();
-//     let mut hash = Sha256::new();
-//     hash.update(key);
-//     hash.update(server.encryption().verify_token());
-//     hash.update(salt.to_be_bytes());
-//     let hash = hash.finalize().to_vec();
-//     let padding = PaddingScheme::new_pkcs1v15_sign(Some(SHA2_256));
-//     // public_key.verify(padding,
-//     //                   hash.as_slice(),
-//     //                   message_signature,
-//     // ).expect("failed to verify signature");
-//     // return publicKeyInfo.createSignatureValidator().validate((SignatureUpdater)((updater) -> {
-//     //     updater.update(nonce);
-//     //     updater.update(signature.saltAsBytes());
-//     // }), signature.signature());
-//     true
-// }
+fn verify_salt(salt: i64, message_signature: &Vec<u8>, codec: &mut ClientCodec, server: &Server) -> bool {
+    let public_key = codec.public_key().as_ref().unwrap();
+    let mut hash = Sha256::default();
+    hash.update(server.encryption().verify_token());
+    hash.update(salt.to_be_bytes());
+    let hash = hash.finalize().to_vec();
+    let padding = PaddingScheme::new_pkcs1v15_sign(Some(SHA2_256));
+    return public_key.verify(padding, hash.as_slice(), message_signature).is_ok();
+}
 
 // async fn join_player(codec: &mut ClientCodec,
 //                      server: &Server) {
