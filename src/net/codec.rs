@@ -1,16 +1,14 @@
-use std::io::{Error, ErrorKind, Result};
-use std::thread;
-use std::thread::Thread;
-use std::time::Duration;
+use std::io::Result;
 
-use bytes::{Buf, BytesMut};
+use bytes::BytesMut;
+use flume::{Iter, Receiver, Sender, TryIter};
 use rsa::RsaPublicKey;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
 use bytebuffer::ByteBuffer;
 use chat::text_component::TextComponent;
-use protocol::{Clientbound, Serverbound};
+use protocol::Clientbound;
 use protocol::compression::{read_packet, write_packet};
 use protocol::fields::numeric::VarInt;
 use protocol::fields::profile::GameProfile;
@@ -31,6 +29,7 @@ pub struct ClientCodec {
     player_name: Option<String>,
     profile: Option<GameProfile>,
     public_key: Option<RsaPublicKey>,
+    packets: (Sender<(i32, Vec<u8>)>, Receiver<(i32, Vec<u8>)>),
 }
 
 impl ClientCodec {
@@ -68,6 +67,7 @@ impl ClientCodec {
             player_name: None,
             profile: None,
             public_key: None,
+            packets: flume::unbounded(),
         }
     }
 
@@ -92,6 +92,10 @@ impl ClientCodec {
         self.conn.shutdown().await.unwrap();
     }
 
+    pub(crate) async fn close_connction(&mut self) {
+        self.conn.shutdown().await.unwrap();
+    }
+
     pub async fn write_packet<T: Clientbound>(&mut self, packet: &T) -> Result<()> {
         let mut buf: Vec<u8> = Vec::new();
         write_packet(packet, &mut buf, self.threshold.unwrap_or(-1))?;
@@ -107,34 +111,30 @@ impl ClientCodec {
         self.stage = stage;
     }
 
-    pub async fn parse_next_packet<T: Serverbound>(&mut self) -> Result<Option<T>> {
-        let v = self.read_next_packet().await?;
-        if v.is_none() {
-            return Ok(None);
-        }
-        let (id, data) = v.unwrap();
-        if id != T::id() {
-            return Err(Error::new(ErrorKind::InvalidInput, format!("Expected packet 0x{:02X}, found 0x{:02X}", T::id(), id)));
-        }
-        let packet = T::read_packet(&mut data.reader());
-        Ok(Some(packet))
-    }
-
-    pub async fn read_next_packet(&mut self) -> Result<Option<(i32, Vec<u8>)>> {
-        let mut buf = BytesMut::with_capacity(1024);
-
+    pub async fn accept(&mut self) {
+        let mut buf = Vec::with_capacity(1024);
         match self.conn.read_buf(&mut buf).await {
-            Ok(n) if n == 0 => return Ok(None),
+            Ok(n) if n == 0 => return,
             Ok(n) => n,
-            Err(e) => return Err(e)
+            Err(e) => return,
         };
 
         if self.encryption().is_some() {
             self.decrypt(buf.as_mut());
         }
 
-        read_packet(&mut buf.reader(), self.threshold.unwrap_or(-1))
-            .map(|t| Some(t))
+        let mut buf = ByteBuffer::from_vec(buf);
+        while buf.has_data() {
+            let threshold = self.threshold.unwrap_or(-1);
+            let p = read_packet(&mut buf, threshold).map(|t| Some(t));
+            if let Ok(Some(v)) = p {
+                self.packets.0.send_async(v).await.unwrap();
+            }
+        }
+    }
+
+    pub fn incoming_packets(&self) -> Receiver<(i32, Vec<u8>)> {
+        self.packets.1.clone()
     }
 
     pub fn enable_encryption(&mut self, shared_secret: [u8; 16]) {

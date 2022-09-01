@@ -1,6 +1,6 @@
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use rsa::Hash::SHA2_256;
-use rsa::pkcs8::{DecodePublicKey};
+use rsa::pkcs8::DecodePublicKey;
 use sha2::{Digest, Sha256};
 
 use chat::style::RgbColor;
@@ -138,6 +138,7 @@ pub(crate) async fn handle_login_start(packet: LoginStart, codec: &mut ClientCod
 
 pub(crate) async fn handle_ping_request(packet: &PingPacket, codec: &mut ClientCodec) {
     codec.write_packet(packet).await.unwrap();
+    codec.close_connction().await;
 }
 
 pub(crate) async fn handle_status_request(_: &StatusRequest, codec: &mut ClientCodec, server: &Server) {

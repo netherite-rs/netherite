@@ -5,7 +5,7 @@ use std::io::{Read, Write, Result, Error, ErrorKind};
 
 /// An enum to represent the byte order of the ByteBuffer object
 #[derive(Debug, Clone, Copy)]
-pub enum Endian{
+pub enum Endian {
     BigEndian,
     LittleEndian,
 }
@@ -115,6 +115,10 @@ impl ByteBuffer {
         self.endian
     }
 
+    pub fn has_data(&self) -> bool {
+        self.data.len() > self.rpos
+    }
+
     // Write operations
 
     /// Append a byte array to the buffer. The buffer is automatically extended if needed
@@ -175,7 +179,7 @@ impl ByteBuffer {
     pub fn write_u16(&mut self, val: u16) {
         let mut buf = [0; 2];
 
-        match self.endian{
+        match self.endian {
             Endian::BigEndian => BigEndian::write_u16(&mut buf, val),
             Endian::LittleEndian => LittleEndian::write_u16(&mut buf, val),
         };
@@ -202,7 +206,7 @@ impl ByteBuffer {
     pub fn write_u32(&mut self, val: u32) {
         let mut buf = [0; 4];
 
-        match self.endian{
+        match self.endian {
             Endian::BigEndian => BigEndian::write_u32(&mut buf, val),
             Endian::LittleEndian => LittleEndian::write_u32(&mut buf, val),
         };
@@ -228,7 +232,7 @@ impl ByteBuffer {
     /// ```
     pub fn write_u64(&mut self, val: u64) {
         let mut buf = [0; 8];
-        match self.endian{
+        match self.endian {
             Endian::BigEndian => BigEndian::write_u64(&mut buf, val),
             Endian::LittleEndian => LittleEndian::write_u64(&mut buf, val),
         };
@@ -255,7 +259,7 @@ impl ByteBuffer {
     pub fn write_f32(&mut self, val: f32) {
         let mut buf = [0; 4];
 
-        match self.endian{
+        match self.endian {
             Endian::BigEndian => BigEndian::write_f32(&mut buf, val),
             Endian::LittleEndian => LittleEndian::write_f32(&mut buf, val),
         };
@@ -276,7 +280,7 @@ impl ByteBuffer {
     pub fn write_f64(&mut self, val: f64) {
         let mut buf = [0; 8];
 
-        match self.endian{
+        match self.endian {
             Endian::BigEndian => BigEndian::write_f64(&mut buf, val),
             Endian::LittleEndian => LittleEndian::write_f64(&mut buf, val),
         };
@@ -308,7 +312,7 @@ impl ByteBuffer {
     pub fn read_bytes(&mut self, size: usize) -> Result<Vec<u8>> {
         self.flush_bit();
         if self.rpos + size > self.data.len() {
-            return Err(Error::new(ErrorKind::UnexpectedEof, "could not read enough bytes from buffer"))
+            return Err(Error::new(ErrorKind::UnexpectedEof, "could not read enough bytes from buffer"));
         }
         let range = self.rpos..self.rpos + size;
         let mut res = Vec::<u8>::new();
@@ -330,7 +334,7 @@ impl ByteBuffer {
     pub fn read_u8(&mut self) -> Result<u8> {
         self.flush_bit();
         if self.rpos >= self.data.len() {
-            return Err(Error::new(ErrorKind::UnexpectedEof, "could not read enough bits from buffer"))
+            return Err(Error::new(ErrorKind::UnexpectedEof, "could not read enough bits from buffer"));
         }
         let pos = self.rpos;
         self.rpos += 1;
@@ -483,7 +487,7 @@ impl ByteBuffer {
     /// ```
     pub fn read_bit(&mut self) -> Result<bool> {
         if self.rpos >= self.data.len() {
-            return Err(Error::new(ErrorKind::UnexpectedEof, "could not read enough bits from buffer"))
+            return Err(Error::new(ErrorKind::UnexpectedEof, "could not read enough bits from buffer"));
         }
         let bit = self.data[self.rpos] & (1 << (7 - self.rbit)) != 0;
         self.rbit += 1;
@@ -591,6 +595,14 @@ impl ByteBuffer {
         } else {
             self.write_bit((value & 1) != 0);
         }
+    }
+
+    pub fn as_slice(&self) -> &[u8] {
+        self.data.as_slice()
+    }
+
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        self.data.as_mut_slice()
     }
 }
 

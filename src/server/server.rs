@@ -18,11 +18,11 @@ pub struct Server {
 }
 
 impl Server {
-    
     pub async fn finish_login(&self, client: &mut ClientCodec) {
         client.set_stage(ProtocolStage::Play);
+
     }
-    
+
     pub async fn new(run_directory: PathBuf, properties: ServerProperties) -> Self {
         let address = format!("{}:{}", properties.server().address(), properties.server().port());
         let listener = TcpListener::bind(address)
@@ -42,26 +42,18 @@ impl Server {
             let server = server.clone();
             let (socket, _) = server.listener.accept().await.unwrap();
             tokio::spawn(async move {
-                let mut client_codec = ClientCodec::new(socket);
+                let mut client = ClientCodec::new(socket);
                 loop {
-                    let rs = client_codec.read_next_packet().await;
-                    if rs.is_err() {
-                        eprintln!("failed to read packet: {}", rs.err().unwrap());
-                        return;
-                    }
-                    let read = rs.unwrap();
-                    if read.is_none() {
-                        return;
-                    }
-                    let (id, data) = read.unwrap();
-                    let mut data = ByteBuffer::from_vec(data);
-
-                    let stage = client_codec.stage();
-                    match stage {
-                        ProtocolStage::Handshake => client_codec.handle_handshake_packet(id, &mut data).await,
-                        ProtocolStage::Status => client_codec.handle_status_packet(id, &mut data, server.deref()).await,
-                        ProtocolStage::Login => client_codec.handle_login_packet(id, &mut data, server.deref()).await,
-                        ProtocolStage::Play => client_codec.handle_play_packet(id, &mut data, server.deref()).await,
+                    client.accept().await;
+                    for (id, data) in client.incoming_packets().try_iter() {
+                        let mut data = ByteBuffer::from_vec(data);
+                        let stage = client.stage();
+                        match stage {
+                            ProtocolStage::Handshake => client.handle_handshake_packet(id, &mut data).await,
+                            ProtocolStage::Status => client.handle_status_packet(id, &mut data, server.deref()).await,
+                            ProtocolStage::Login => client.handle_login_packet(id, &mut data, server.deref()).await,
+                            ProtocolStage::Play => client.handle_play_packet(id, &mut data, server.deref()).await,
+                        }
                     }
                 }
             });
