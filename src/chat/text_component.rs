@@ -1,13 +1,13 @@
 use std::io::{Read, Write};
 use serde::{Deserialize, Serialize};
 
-use protocol::fields::identifier::Key;
-use protocol::fields::PacketField;
-use protocol::packet_io::{PacketReaderExt, PacketWriterExt};
-use crate::component::Component;
+use crate::protocol::fields::key::Key;
+use crate::protocol::fields::PacketField;
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
+use crate::chat::component::Component;
 
-use crate::events::{ClickEvent, HoverEvent};
-use crate::style::Color;
+use crate::chat::events::{ClickEvent, HoverEvent};
+use crate::chat::style::Color;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TextComponent {
@@ -176,7 +176,7 @@ impl PacketField for TextComponent {
         Ok(value)
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<()> {
         let string = serde_json::to_string(&self)?;
         output.write_utf8(&string)
     }

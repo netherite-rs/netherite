@@ -20,7 +20,7 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
                 "VarLong" => t.push(m_name("varlong", &field_name)),
                 "String" => t.push(m_name("utf8", &field_name)),
                 "bool" => {
-                    t.push(quote! {protocol::packet_io::PacketWriterExt::write_bool(output, self.#field_name)?;}.into())
+                    t.push(quote! {crate::protocol::packet_io::PacketWriterExt::write_bool(output, self.#field_name)?;}.into())
                 }
                 type_name => {
                     match type_name {
@@ -36,11 +36,10 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
             }
         }
         let output = quote! {
-            impl protocol::Clientbound for #name {
-                fn write_packet(&self, output: &mut impl std::io::Write) -> std::io::Result<usize> {
-                    let mut size: usize = 0;
+            impl crate::protocol::Clientbound for #name {
+                fn write_packet(&self, output: &mut bytebuffer::ByteBuffer) -> std::io::Result<()> {
                     #(#t)*
-                    Ok(size)
+                    Ok(())
                 }
 
                 fn id() -> i32 {
@@ -56,16 +55,14 @@ pub fn derive_clientbound(ast: syn::DeriveInput, options: PacketInfo) -> TokenSt
 fn m_name(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
-        size += protocol::packet_io::PacketWriterExt::#t(output, &self.#field_name)?;
+        crate::protocol::packet_io::PacketWriterExt::#t(output, &self.#field_name)?;
     };
 }
 
 fn big_endian(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
-    let method: TokenStream = method.parse().unwrap();
     return quote! {
         byteorder::WriteBytesExt::#t::<byteorder::BigEndian>(output, self.#field_name)?;
-        size += core::mem::size_of::<#method>();
     };
 }
 
@@ -73,12 +70,11 @@ fn write_bytes_ext(method: &str, field_name: &Ident) -> TokenStream {
     let t: TokenStream = format!("write_{}", method).as_str().parse::<TokenStream>().unwrap();
     return quote! {
         byteorder::WriteBytesExt::#t(output, self.#field_name)?;
-        size += 1;
     };
 }
 
 fn write_name(field_name: &Ident) -> TokenStream {
     return quote! {
-        size += protocol::packet_io::PacketWriterExt::write_field(output, &self.#field_name)?;
+        crate::protocol::packet_io::PacketWriterExt::write_field(output, &self.#field_name)?;
     };
 }

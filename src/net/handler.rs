@@ -1,6 +1,6 @@
 use bytebuffer::ByteBuffer;
 
-use protocol::Serverbound;
+use crate::protocol::Serverbound;
 
 use crate::net::codec::ClientCodec;
 use crate::net::packet_handler::serverbound;
@@ -32,6 +32,10 @@ impl PacketHandler {
             0x01 => {
                 let packet = login::EncryptionResponse::read_packet(data);
                 serverbound::handle_encryption_response(packet, codec, server).await;
+            }
+            0x02 => {
+                let packet = login::LoginPluginResponse::read_packet(data);
+                println!("{:?}", packet.message_id);
             }
             n => panic!("invalid login packet id: {}", n)
         }

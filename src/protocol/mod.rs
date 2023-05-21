@@ -7,6 +7,7 @@ extern crate protocol_derive;
 
 use std::io::{Read, Result, Write};
 
+use bytebuffer::ByteBuffer;
 #[cfg(feature = "protocol_derive")]
 #[doc(hidden)]
 pub use protocol_derive::*;
@@ -16,12 +17,12 @@ pub mod fields;
 pub mod compression;
 
 pub trait Serverbound {
-    fn read_packet(input: &mut impl Read) -> Self;
+    fn read_packet(input: &mut ByteBuffer) -> Self;
     fn id() -> i32;
 }
 
 pub trait Clientbound {
-    fn write_packet(&self, output: &mut impl Write) -> Result<usize>;
+    fn write_packet(&self, output: &mut ByteBuffer) -> Result<()>;
     fn id() -> i32;
 }
 
@@ -33,11 +34,11 @@ mod tests {
 
     use crate::{Clientbound, Serverbound};
     use crate::compression::{read_compressed_packet, write_compressed_packet};
-    use crate::fields::generic::Json;
-    use crate::fields::numeric::{VarInt, VarLong};
-    use crate::fields::position::Position;
-    use crate::packet_io::PacketReaderExt;
-    use crate::packet_io::PacketWriterExt;
+    use crate::protocol::fields::generic::Json;
+    use crate::protocol::fields::numeric::{VarInt, VarLong};
+    use crate::protocol::fields::position::Position;
+    use crate::protocol::packet_io::PacketReaderExt;
+    use crate::protocol::packet_io::PacketWriterExt;
 
     #[test]
     fn test_varint() {
@@ -154,14 +155,12 @@ mod tests {
     }
 
     impl Clientbound for HandshakePacket {
-        fn write_packet(&self, output: &mut impl std::io::Write) -> std::io::Result<usize> {
-            let mut size: usize = 0;
-            size += PacketWriterExt::write_varint(output, &self.protocol_version)?;
-            size += PacketWriterExt::write_utf8(output, &self.server_address)?;
+        fn write_packet(&self, output: &mut ByteBuffer) -> std::io::Result<()> {
+            PacketWriterExt::write_varint(output, &self.protocol_version)?;
+            PacketWriterExt::write_utf8(output, &self.server_address)?;
             byteorder::WriteBytesExt::write_u16::<byteorder::BigEndian>(output, self.server_port)?;
-            size += core::mem::size_of::<u16>();
-            size += PacketWriterExt::write_varint(output, &self.next_state)?;
-            Ok(size)
+            PacketWriterExt::write_varint(output, &self.next_state)?;
+            Ok(())
         }
 
         fn id() -> i32 {
@@ -170,7 +169,7 @@ mod tests {
     }
 
     impl Serverbound for HandshakePacket {
-        fn read_packet(input: &mut impl std::io::Read) -> HandshakePacket {
+        fn read_packet(input: &mut ByteBuffer) -> HandshakePacket {
             HandshakePacket {
                 protocol_version: PacketReaderExt::read_varint(input)
                     .expect("failed to read protocol_version"),

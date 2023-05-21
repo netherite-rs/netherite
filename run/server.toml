@@ -11,3 +11,8 @@ icon = "server-icon.png"
 
 [game]
 default-gamemode = "adventure"
+difficulty = "peaceful"
+view-distance = 12
+simulation-disance = 12
+reduce-debug-info = false
+enable-respawn-screen = true

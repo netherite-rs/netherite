@@ -6,8 +6,9 @@ pub mod serializers;
 
 #[cfg(test)]
 mod tests {
-    use crate::style::{NamedTextColor, RgbColor};
-    use crate::text_component::TextComponent;
+    use crate::chat::style::RgbColor;
+    use crate::chat::style::NamedTextColor;
+    use crate::chat::text_component::TextComponent;
 
     #[test]
     fn test_rgb() {

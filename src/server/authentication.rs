@@ -1,7 +1,7 @@
 use num_bigint::BigInt;
 use sha1::{Digest, Sha1};
 
-use protocol::fields::profile::GameProfile;
+use crate::protocol::fields::profile::GameProfile;
 
 const HAS_JOINED: &str = "https://sessionserver.mojang.com/session/minecraft/hasJoined";
 

@@ -1,20 +1,20 @@
 use std::io::{Error, ErrorKind, Read, Result, Write};
 
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
-use nbt::Blob;
+use nbt::{Blob, Value};
 use uuid::Uuid;
 
-use crate::packet_io::{PacketReaderExt, PacketWriterExt};
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
 
 pub mod numeric;
 pub mod position;
 pub mod generic;
-pub mod identifier;
+pub mod key;
 pub mod profile;
 
 pub trait PacketField {
     fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized;
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize>;
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()>;
 }
 
 impl PacketField for String {
@@ -22,7 +22,7 @@ impl PacketField for String {
         input.read_utf8()
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_utf8(&self)
     }
 }
@@ -32,8 +32,21 @@ impl PacketField for bool {
         input.read_bool()
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_bool(*self)
+    }
+}
+
+impl PacketField for Value {
+    fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
+        let id = input.read_u8()?;
+        return Ok(Value::from_reader(id, input).unwrap());
+    }
+
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+        output.write_u8(self.id())?;
+        self.to_writer(output)?;
+        Ok(())
     }
 }
 
@@ -45,9 +58,9 @@ impl PacketField for Blob {
         }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         match self.to_writer(output) {
-            Ok(_) => Ok(self.len_bytes()),
+            Ok(_) => Ok(()),
             Err(why) => Err(Error::new(ErrorKind::InvalidData, why.to_string()))
         }
     }
@@ -60,10 +73,10 @@ impl PacketField for Uuid {
         Ok(Uuid::from_u64_pair(most_sig, least_sig))
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         let (most_sig, least_sig) = self.as_u64_pair();
         output.write_u64::<BigEndian>(most_sig)?;
         output.write_u64::<BigEndian>(least_sig)?;
-        Ok(2 * core::mem::size_of::<u64>())
+        Ok(())
     }
 }

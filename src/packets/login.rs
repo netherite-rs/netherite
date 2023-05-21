@@ -1,11 +1,16 @@
+use std::io::{Read, Result};
+
 use nbt::Blob;
-use chat::text_component::TextComponent;
-use protocol::fields::identifier::Key;
-use protocol::fields::numeric::VarInt;
-use protocol::fields::position::Position;
-use protocol::fields::profile::GameProfile;
-use protocol::packet_io::PacketReaderExt;
-use protocol::{Clientbound, Serverbound};
+
+use bytebuffer::ByteBuffer;
+use crate::chat::text_component::TextComponent;
+use crate::protocol::{Clientbound, Serverbound};
+use crate::protocol::fields::key::Key;
+use crate::protocol::fields::numeric::VarInt;
+use crate::protocol::fields::position::Position;
+use crate::protocol::fields::profile::GameProfile;
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
+use protocol_derive::{Clientbound, Serverbound};
 
 #[derive(Serverbound, Debug)]
 #[packet(id = 0x00)]
@@ -26,9 +31,9 @@ pub struct DisconnectLogin {
 #[derive(Clientbound, Debug)]
 #[packet(id = 0x01)]
 pub struct EncryptionRequest {
-    pub(crate) server_id: String,
-    pub(crate) public_key: Vec<u8>,
-    pub(crate) verify_token: Vec<u8>,
+    pub server_id: String,
+    pub public_key: Vec<u8>,
+    pub verify_token: Vec<u8>,
 }
 
 #[derive(Clientbound, Debug)]
@@ -52,8 +57,8 @@ pub struct EncryptionResponse {
     pub message_signature: Option<Vec<u8>>,
 }
 
-impl protocol::Serverbound for EncryptionResponse {
-    fn read_packet(input: &mut impl std::io::Read) -> EncryptionResponse {
+impl Serverbound for EncryptionResponse {
+    fn read_packet(input: &mut ByteBuffer) -> EncryptionResponse {
         let shared_secret = input.read_field::<Vec<u8>>().expect("failed to read shared_secret");
         let has_verify_token = input.read_bool().expect("failed to read has_verify_token");
         EncryptionResponse {
@@ -88,5 +93,49 @@ pub struct LoginPlay {
     pub is_flat: bool,
     pub has_death_location: bool,
     pub death_dimension_name: Option<Key>,
-    pub death_location: Option<Position>
+    pub death_location: Option<Position>,
+}
+
+pub struct LoginPluginRequest {
+    pub message_id: VarInt,
+    pub channel: Key,
+    pub data: Vec<u8>,
+}
+
+pub struct LoginPluginResponse {
+    pub message_id: VarInt,
+    pub successful: bool,
+    pub data: Option<Vec<u8>>,
+}
+
+impl Clientbound for LoginPluginRequest {
+    fn write_packet(&self, output: &mut ByteBuffer) -> Result<()> {
+        output.write_varint(&self.message_id)?;
+        output.write_field(&self.channel)?;
+        output.write_bytes(&self.data);
+        Ok(())
+    }
+
+    fn id() -> i32 { 0x04 }
+}
+
+impl Serverbound for LoginPluginResponse {
+    fn read_packet(input: &mut ByteBuffer) -> Self {
+        let message_id = input.read_varint().expect("failed to read 'message_id'");
+        let successful = input.read_bool().expect("failed to read 'successful'");
+        let data = if successful {
+            let mut data = Vec::new();
+            input.read_to_end(&mut data).expect("failed to read 'data'");
+            Some(data)
+        } else {
+            None
+        };
+        LoginPluginResponse {
+            message_id,
+            successful,
+            data,
+        }
+    }
+
+    fn id() -> i32 { 0x02 }
 }

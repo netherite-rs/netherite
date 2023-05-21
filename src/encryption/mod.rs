@@ -1,7 +1,6 @@
 pub mod server;
 pub mod client;
 
-
 #[cfg(test)]
 mod tests {
     use aes::Aes128;
@@ -13,11 +12,11 @@ mod tests {
     use nbt::Blob;
     use rand::{Rng, thread_rng};
 
-    use protocol::compression::{read_compressed_packet, write_compressed_packet};
-    use protocol::fields::identifier::Key;
-    use protocol::fields::numeric::VarInt;
-    use protocol::fields::position::Position;
-    use protocol::{Serverbound};
+    use crate::protocol::compression::{read_compressed_packet, write_compressed_packet};
+    use crate::protocol::fields::key::Key;
+    use crate::protocol::fields::numeric::VarInt;
+    use crate::protocol::fields::position::Position;
+    use crate::protocol::{Serverbound};
     use crate::encryption::server::ServerEncryption;
     use crate::packets::login::LoginPlay;
 
@@ -75,7 +74,7 @@ mod tests {
 
         EncryptAes128::new(key, key).encrypt(&mut buf);
         DecryptAes128::new(key, key).decrypt(&mut buf);
-        let read_packet = read_compressed_packet(&mut buf.reader()).unwrap().1;
+        let read_packet = read_compressed_packet(&mut buf).unwrap().1;
         let read = LoginPlay::read_packet(&mut read_packet.reader());
         assert_eq!(buf.to_vec(), original);
     }

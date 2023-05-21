@@ -1,17 +1,16 @@
 use std::io::Result;
 
-use bytes::BytesMut;
-use flume::{Iter, Receiver, Sender, TryIter};
+use flume::{Receiver, Sender};
 use rsa::RsaPublicKey;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
 use bytebuffer::ByteBuffer;
-use chat::text_component::TextComponent;
-use protocol::Clientbound;
-use protocol::compression::{read_packet, write_packet};
-use protocol::fields::numeric::VarInt;
-use protocol::fields::profile::GameProfile;
+use crate::chat::text_component::TextComponent;
+use crate::protocol::Clientbound;
+use crate::protocol::compression::{read_packet, write_packet};
+use crate::protocol::fields::numeric::VarInt;
+use crate::protocol::fields::profile::GameProfile;
 
 use crate::encryption::client::ClientEncryption;
 use crate::net::handler::PacketHandler;
@@ -97,7 +96,7 @@ impl ClientCodec {
     }
 
     pub async fn write_packet<T: Clientbound>(&mut self, packet: &T) -> Result<()> {
-        let mut buf: Vec<u8> = Vec::new();
+        let mut buf = ByteBuffer::new();
         write_packet(packet, &mut buf, self.threshold.unwrap_or(-1))?;
         if self.encryption().is_some() {
             self.encrypt(buf.as_mut_slice());

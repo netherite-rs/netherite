@@ -1,8 +1,12 @@
-use std::io::{Read, Write, Result, Error, ErrorKind};
+use std::io::{Error, ErrorKind, Read, Result, Write};
+
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::fields::PacketField;
-use crate::packet_io::{PacketReaderExt, PacketWriterExt};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+use crate::protocol::fields::PacketField;
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
+use crate::util::StringVisitor;
 
 lazy_static! {
     static ref NAMESPACE_REGEX: Regex = Regex::new(r"[a-z0-9._-]+").unwrap();
@@ -78,7 +82,7 @@ impl PacketField for Key {
         Key::parse(&string)
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         let string = format!("{}:{}", self.namespace, self.value);
         output.write_utf8(&string)
     }
@@ -93,5 +97,19 @@ impl From<String> for Key {
 impl Into<String> for Key {
     fn into(self) -> String {
         format!("{}:{}", self.namespace, self.value)
+    }
+}
+
+impl Serialize for Key {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> where S: Serializer {
+        let string = format!("{}:{}", self.namespace, self.value);
+        serializer.serialize_str(&string)
+    }
+}
+
+impl<'de> Deserialize<'de> for Key {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error> where D: Deserializer<'de> {
+        let value = deserializer.deserialize_str(StringVisitor)?;
+        return Ok(Key::from(value));
     }
 }

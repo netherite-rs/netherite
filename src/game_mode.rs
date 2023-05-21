@@ -3,6 +3,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde::de::{Error, Visitor};
 
 use enum_utils::{NamedEnum, OrdinalEnum};
+use crate::util::StringVisitor;
 
 #[derive(NamedEnum, OrdinalEnum, Debug)]
 pub enum GameMode {
@@ -23,31 +24,9 @@ impl Serialize for GameMode {
     }
 }
 
-struct StrVisitor;
-
-impl<'de> Visitor<'de> for StrVisitor {
-    type Value = String;
-
-    fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
-        formatter.write_str("a string")
-    }
-
-    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> where E: Error {
-        Ok(String::from(v))
-    }
-
-    fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E> where E: Error {
-        Ok(String::from(v))
-    }
-
-    fn visit_string<E>(self, v: String) -> Result<Self::Value, E> where E: Error {
-        Ok(v)
-    }
-}
-
 impl<'de> Deserialize<'de> for GameMode {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: Deserializer<'de> {
-        let result = deserializer.deserialize_string(StrVisitor)?;
+        let result = deserializer.deserialize_string(StringVisitor)?;
         let string = result.as_str();
         match string {
             "survival" => Ok(GameMode::Survival),

@@ -19,8 +19,8 @@ Netherite implements the protocol of **Minecraft 1.19.2**, and is still under he
   - [x] Encryption
   - [x] Compression
   - [ ] Handling of invalid packets or out-of-order ones.
-- [ ] Region system
-  - [ ] Chunks
+- [-] Region system
+  - [x] Chunks
   - [ ] World data
 - [ ] Entity component system
 - [ ] A suitable NBT framework

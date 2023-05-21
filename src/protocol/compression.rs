@@ -4,13 +4,15 @@ use flate2::Compression;
 use flate2::read::ZlibDecoder;
 use flate2::write::ZlibEncoder;
 
-use crate::Clientbound;
-use crate::fields::numeric::VarInt;
-use crate::packet_io::{PacketReaderExt, PacketWriterExt};
+use bytebuffer::ByteBuffer;
+
+use crate::protocol::Clientbound;
+use crate::protocol::fields::numeric::VarInt;
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
 
 const MAX_DATA_LENGTH: usize = 2097152;
 
-pub fn read_packet(input: &mut impl Read, threshold: i32) -> Result<(i32, Vec<u8>)> {
+pub fn read_packet(input: &mut ByteBuffer, threshold: i32) -> Result<(i32, Vec<u8>)> {
     if threshold >= 0 {
         read_compressed_packet(input)
     } else {
@@ -21,7 +23,7 @@ pub fn read_packet(input: &mut impl Read, threshold: i32) -> Result<(i32, Vec<u8
 /// Reads a compressed packet.
 ///
 /// Returns the packet ID and data
-pub fn read_compressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)> {
+pub fn read_compressed_packet(input: &mut ByteBuffer) -> Result<(i32, Vec<u8>)> {
     let packet_length = input.read_varint()?.0 as usize;
     let data_length = input.read_varint()?.0 as usize;
     if data_length != 0 {
@@ -39,7 +41,7 @@ pub fn read_compressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)> {
     }
 }
 
-pub fn read_uncompressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)> {
+pub fn read_uncompressed_packet(input: &mut ByteBuffer) -> Result<(i32, Vec<u8>)> {
     let packet_length = input.read_varint()?.0 as usize;
     let packet_id = input.read_varint()?;
     let data_length = packet_length - packet_id.size();
@@ -54,7 +56,7 @@ pub fn read_uncompressed_packet(input: &mut impl Read) -> Result<(i32, Vec<u8>)>
     Ok((packet_id.0, buf))
 }
 
-pub fn write_packet<T: Clientbound>(packet: &T, output: &mut impl Write, threshold: i32) -> Result<()> {
+pub fn write_packet<T: Clientbound>(packet: &T, output: &mut ByteBuffer, threshold: i32) -> Result<()> {
     if threshold >= 0 {
         write_compressed_packet(packet, output, threshold)
     } else {
@@ -62,11 +64,11 @@ pub fn write_packet<T: Clientbound>(packet: &T, output: &mut impl Write, thresho
     }
 }
 
-pub fn write_uncompressed_packet<T: Clientbound>(packet: &T, output: &mut impl Write) -> Result<()> {
+pub fn write_uncompressed_packet<T: Clientbound>(packet: &T, output: &mut ByteBuffer) -> Result<()> {
     let id = VarInt(T::id());
     let mut length = id.size();
 
-    let mut buf = Vec::new();
+    let mut buf = ByteBuffer::new();
     packet.write_packet(&mut buf)?;
     length += buf.len();
 
@@ -76,10 +78,10 @@ pub fn write_uncompressed_packet<T: Clientbound>(packet: &T, output: &mut impl W
     Ok(())
 }
 
-pub fn write_compressed_packet<T: Clientbound>(packet: &T, output: &mut impl Write, threshold: i32) -> Result<()> {
+pub fn write_compressed_packet<T: Clientbound>(packet: &T, output: &mut ByteBuffer, threshold: i32) -> Result<()> {
     let id = VarInt(T::id());
 
-    let mut uncompressed_data = Vec::new();
+    let mut uncompressed_data = ByteBuffer::new();
     uncompressed_data.write_varint(&id)?;
     packet.write_packet(&mut uncompressed_data)?;
 

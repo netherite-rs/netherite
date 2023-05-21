@@ -4,9 +4,9 @@ use std::io::Error;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::fields::generic::KnownOption;
-use crate::fields::PacketField;
-use crate::packet_io::{PacketReaderExt, PacketWriterExt};
+use crate::protocol::fields::generic::KnownOption;
+use crate::protocol::fields::PacketField;
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GameProfile {
@@ -53,11 +53,11 @@ impl PacketField for GameProfile {
         })
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<usize> {
-        let mut size = output.write_field(&self.id)?;
-        size += output.write_utf8(&self.name)?;
-        size += output.write_field(&self.properties)?;
-        Ok(size)
+    fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<()> {
+        output.write_field(&self.id)?;
+        output.write_utf8(&self.name)?;
+        output.write_field(&self.properties)?;
+        Ok(())
     }
 }
 
@@ -80,18 +80,18 @@ impl PacketField for Property {
         })
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<usize> {
-        let mut size = output.write_utf8(&self.name)?;
-        size += output.write_utf8(&self.value)?;
+    fn write_field<W: Write>(&self, output: &mut W) -> std::io::Result<()> {
+        output.write_utf8(&self.name)?;
+        output.write_utf8(&self.value)?;
         match &self.signature {
             Some(v) => {
-                size += output.write_bool(true)?;
-                size += output.write_utf8(v)?;
+                output.write_bool(true)?;
+                output.write_utf8(v)?;
             }
             None => {
-                size += output.write_bool(false)?;
+                output.write_bool(false)?;
             }
         }
-        Ok(size)
+        Ok(())
     }
 }

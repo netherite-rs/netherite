@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::serializers::{ComponentSerializer, JsonSerializer};
-use crate::text_component::TextComponent;
+use crate::chat::serializers::{ComponentSerializer, JsonSerializer};
+use crate::chat::text_component::TextComponent;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HoverEvent {
@@ -64,7 +64,7 @@ impl ClickEvent {
         }
     }
 
-    pub  fn copy_to_clipboard(text: String) -> ClickEvent {
+    pub fn copy_to_clipboard(text: String) -> ClickEvent {
         ClickEvent {
             action: String::from("copy_to_clipboard"),
             value: text,

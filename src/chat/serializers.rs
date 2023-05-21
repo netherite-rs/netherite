@@ -1,6 +1,6 @@
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use crate::component::Component;
+use crate::chat::component::Component;
 
 pub trait ComponentSerializer<F, T> {
     type Error;

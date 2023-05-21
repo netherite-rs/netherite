@@ -6,9 +6,9 @@ use serde::Serialize;
 
 use enum_utils::OrdinalEnum;
 
-use crate::fields::numeric::VarInt;
-use crate::fields::PacketField;
-use crate::packet_io::{PacketReaderExt, PacketWriterExt};
+use crate::protocol::fields::numeric::VarInt;
+use crate::protocol::fields::PacketField;
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
 
 /// A basic wrapper that handles reading and writing of the internal
 /// type by converting them to and from JSON
@@ -32,9 +32,9 @@ impl<const S: usize> PacketField for [u8; S] {
         Ok(buf)
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_all(&self[..])?;
-        Ok(self.len())
+        Ok(())
     }
 }
 
@@ -50,12 +50,11 @@ impl<const S: usize, T: PacketField> PacketField for [T; S] {
         }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
-        let mut size: usize = 0;
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         for i in 0..self.len() {
-            size += output.write_field(&self[i])?;
+            output.write_field(&self[i])?;
         }
-        Ok(size)
+        Ok(())
     }
 }
 
@@ -68,11 +67,11 @@ impl<T: PacketField> PacketField for Option<T> {
         }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         if self.is_some() {
             return output.write_field(self.as_ref().unwrap());
         }
-        Ok(0)
+        Ok(())
     }
 }
 
@@ -83,7 +82,7 @@ impl<T: Serialize + DeserializeOwned> PacketField for Json<T> {
         Ok(Json(value))
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         let string = serde_json::to_string(&self.0)?;
         output.write_utf8(&string)
     }
@@ -99,12 +98,12 @@ impl<T: PacketField> PacketField for Vec<T> {
         Ok(buf)
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
-        let mut size = output.write_varint(&VarInt(self.len() as i32))?;
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+        output.write_varint(&VarInt(self.len() as i32))?;
         for elem in self {
-            size += output.write_field(elem)?;
+            output.write_field(elem)?;
         }
-        Ok(size)
+        Ok(())
     }
 }
 
@@ -116,11 +115,10 @@ impl PacketField for Vec<u8> {
         Ok(buf)
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
-        let mut size = output.write_varint(&VarInt(self.len() as i32))?;
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+        output.write_varint(&VarInt(self.len() as i32))?;
         output.write_all(self.as_slice())?;
-        size += self.len();
-        Ok(size)
+        Ok(())
     }
 }
 
@@ -134,7 +132,7 @@ impl<T: OrdinalEnum> PacketField for Ordinal<T> {
         }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_varint(&VarInt(self.0.ordinal() as i32))
     }
 }
@@ -148,13 +146,12 @@ impl<T: PacketField> PacketField for KnownOption<T> {
         return Ok(KnownOption(None));
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
-        let mut size = 0;
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         let opt = self.0.as_ref();
-        size += output.write_bool(opt.is_some())?;
+        output.write_bool(opt.is_some())?;
         if opt.is_some() {
-            size += output.write_field(opt.unwrap())?;
+            output.write_field(opt.unwrap())?;
         }
-        Ok(size)
+        Ok(())
     }
 }

@@ -1,7 +1,7 @@
 use std::fmt;
 use convert_case::{Case, Casing};
 use lazy_static::lazy_static;
-use protocol::fields::identifier::Key;
+use crate::protocol::fields::key::Key;
 
 lazy_static! {
     static ref UNIFORM_FONT: Key = Key::minecraft("uniform");

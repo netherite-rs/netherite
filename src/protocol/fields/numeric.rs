@@ -3,8 +3,8 @@ use std::io::{Read, Result, Write};
 
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 
-use crate::fields::PacketField;
-use crate::packet_io::{PacketReaderExt, PacketWriterExt};
+use crate::protocol::fields::PacketField;
+use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
 
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Debug)]
 pub struct VarInt(pub i32);
@@ -14,6 +14,9 @@ pub struct VarLong(pub i64);
 
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Debug)]
 pub struct Angle(pub u8);
+
+#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Debug)]
+pub struct BitSet(Vec<i64>);
 
 impl Angle {
     pub fn to_deg(&self) -> f32 {
@@ -30,7 +33,7 @@ impl PacketField for VarInt {
         input.read_varint()
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_varint(&self)
     }
 }
@@ -40,7 +43,7 @@ impl PacketField for VarLong {
         input.read_varlong()
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_varlong(&self)
     }
 }
@@ -50,9 +53,9 @@ impl PacketField for Angle {
         Ok(Angle(input.read_u8()?))
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_u8(self.0)?;
-        Ok(1)
+        Ok(())
     }
 }
 
@@ -65,12 +68,12 @@ impl PacketField for Option<u8> {
         }
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         if self.is_some() {
             output.write_u8(self.unwrap())?;
-            return Ok(1);
+            return Ok(());
         }
-        Ok(0)
+        Ok(())
     }
 }
 
@@ -79,30 +82,30 @@ impl PacketField for i8 {
         input.read_i8()
     }
 
-    fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
         output.write_i8(*self)?;
-        Ok(1)
+        Ok(())
     }
 }
 
 macro_rules! field_for_numeric {
     ($($p_type:ident),*)=> {
-        paste::item!{
+        paste::item! {
             $(impl PacketField for $p_type {
                 fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
                     input.[<read_$p_type>]::<BigEndian>()
                 }
 
-                fn write_field<W: Write>(&self, output: &mut W) -> Result<usize> {
+                fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
                     output.[<write_$p_type>]::<BigEndian>(*self)?;
-                    Ok(core::mem::size_of::<[<$p_type>]>())
+                    Ok(())
                 }
             })*
         }
     }
 }
 
-field_for_numeric! { u16, u32, u64, u128, i16, i32, i64, i128}
+field_for_numeric! { u16, u32, u64, u128, i16, i32, i64, i128, f32, f64 }
 
 impl VarInt {
     pub fn size(&self) -> usize {
@@ -129,5 +132,38 @@ impl VarLong {
             value >>= 7;
             size += 1;
         }
+    }
+}
+
+impl PacketField for BitSet {
+    fn read_field<R: Read>(input: &mut R) -> Result<Self> where Self: Sized {
+        let value = input.read_field::<Vec<i64>>()?;
+        Ok(BitSet(value))
+    }
+
+    fn write_field<W: Write>(&self, output: &mut W) -> Result<()> {
+        output.write_field(&self.0)
+    }
+}
+
+impl BitSet {
+    pub fn new() -> Self {
+        BitSet(Vec::new())
+    }
+
+    pub fn get(&self, index: usize) -> bool {
+        (self.0[index / 64] & (1 << (index % 64))) != 0
+    }
+
+    pub fn set(&mut self, index: usize, value: bool) {
+        if value {
+            self.0[index / 64] |= 1 << (index % 64)
+        } else {
+            self.0[index / 64] &= !(1 << (index % 64))
+        }
+    }
+
+    pub fn data(&self) -> &Vec<i64> {
+        &self.0
     }
 }

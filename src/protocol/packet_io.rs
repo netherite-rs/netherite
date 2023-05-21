@@ -5,8 +5,8 @@ use std::io::ErrorKind::InvalidData;
 
 use byteorder::{ReadBytesExt, WriteBytesExt};
 
-use crate::fields::numeric::{VarInt, VarLong};
-use crate::fields::PacketField;
+use crate::protocol::fields::numeric::{VarInt, VarLong};
+use crate::protocol::fields::PacketField;
 
 const SEGMENT_BITS: u32 = 0x7F; /* = 127 */
 const CONTINUE_BIT: u32 = 0x80; /* = 128 */
@@ -14,7 +14,6 @@ const MAX_VARINT_BITS: usize = 32;
 const MAX_VARLONG_BITS: usize = 64;
 
 pub trait PacketReaderExt: Read + Sized {
-
     fn read_varint(&mut self) -> Result<VarInt> {
         let mut value: u32 = 0;
         let mut position = 0_u32;
@@ -74,47 +73,43 @@ pub trait PacketReaderExt: Read + Sized {
 }
 
 pub trait PacketWriterExt: Write + Sized {
-    fn write_varint(&mut self, value: &VarInt) -> Result<usize> {
+    fn write_varint(&mut self, value: &VarInt) -> Result<()> {
         let mut value = value.0 as u32;
-        let mut size: usize = 1;
         loop {
             if (value & !SEGMENT_BITS) == 0 {
                 self.write_u8(value as u8)?;
-                return Ok(size);
+                return Ok(());
             }
             self.write_u8(((value & SEGMENT_BITS) | CONTINUE_BIT) as u8)?;
             value >>= 7;
-            size += 1;
         }
     }
 
-    fn write_varlong(&mut self, value: &VarLong) -> Result<usize> {
+    fn write_varlong(&mut self, value: &VarLong) -> Result<()> {
         let mut value = value.0 as u64;
-        let mut size: usize = 1;
         loop {
             if (value & (!SEGMENT_BITS) as u64) == 0 {
                 self.write_u8(value as u8)?;
-                return Ok(size);
+                return Ok(());
             }
             self.write_u8(((value & SEGMENT_BITS as u64) | CONTINUE_BIT as u64) as u8)?;
             value >>= 7u64;
-            size += 1;
         }
     }
 
-    fn write_utf8(&mut self, value: &String) -> Result<usize> {
+    fn write_utf8(&mut self, value: &String) -> Result<()> {
         let bytes = value.as_bytes();
-        let size = self.write_varint(&VarInt(bytes.len() as i32))?;
+        self.write_varint(&VarInt(bytes.len() as i32))?;
         self.write_all(bytes)?;
-        Ok(size + bytes.len())
+        Ok(())
     }
 
-    fn write_bool(&mut self, value: bool) -> Result<usize> {
+    fn write_bool(&mut self, value: bool) -> Result<()> {
         self.write_u8(if value { 1 } else { 0 })?;
-        Ok(1)
+        Ok(())
     }
 
-    fn write_field(&mut self, value: &impl PacketField) -> Result<usize> {
+    fn write_field(&mut self, value: &impl PacketField) -> Result<()> {
         value.write_field(self)
     }
 }

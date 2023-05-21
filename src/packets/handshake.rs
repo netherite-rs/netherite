@@ -1,5 +1,5 @@
-use protocol::fields::numeric::VarInt;
-use protocol::Serverbound;
+use crate::protocol::fields::numeric::VarInt;
+use protocol_derive::{Serverbound};
 
 pub const STATUS: i32 = 1;
 pub const LOGIN: i32 = 2;

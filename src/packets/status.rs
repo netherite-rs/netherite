@@ -1,8 +1,9 @@
 
 use serde::{Serialize, Deserialize};
-use chat::text_component::TextComponent;
-use protocol::fields::generic::Json;
-use protocol::{Clientbound, Serverbound};
+use crate::chat::text_component::TextComponent;
+use crate::protocol::fields::generic::Json;
+use crate::protocol::{Clientbound, Serverbound};
+use protocol_derive::{Clientbound, Serverbound};
 
 #[derive(Serverbound)]
 #[packet(id = 0x00)]
