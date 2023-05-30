@@ -1,3 +1,6 @@
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering::SeqCst;
+
 use nbt::Blob;
 use rsa::{PaddingScheme, PublicKey, RsaPublicKey};
 use rsa::pkcs8::DecodePublicKey;
@@ -12,17 +15,18 @@ use crate::net::codec::{ClientCodec, ProtocolStage};
 use crate::packets::handshake;
 use crate::packets::handshake::Handshake;
 use crate::packets::login::{EncryptionRequest, EncryptionResponse, LoginPlay, LoginStart, LoginSuccess};
-use crate::packets::play::SetDefaultSpawnPosition;
 use crate::packets::status::{
     PingPacket, Response, RespPlayers, RespPlayerSample, RespVersion, StatusRequest, StatusResponse,
 };
 use crate::protocol::fields::generic::Json;
 use crate::protocol::fields::key::Key;
-use crate::protocol::fields::numeric::{Angle, VarInt};
+use crate::protocol::fields::numeric::{VarInt};
 use crate::protocol::fields::position::Position;
 use crate::protocol::fields::profile::GameProfile;
-use crate::Server;
 use crate::server::authentication;
+use crate::server::server::Server;
+
+static ENTITY_ID_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
 pub(crate) async fn handle_handshake(packet: &Handshake, codec: &mut ClientCodec) {
     let next_state = packet.next_state.0;
@@ -42,21 +46,21 @@ pub(crate) async fn handle_encryption_response(
     server: &Server,
 ) {
     let shared_secret = server.encryption().decrypt(&packet.shared_secret).unwrap();
-    if !packet.has_verify_token {
-        if !verify_salt(
-            packet.salt.unwrap(),
-            packet.message_signature.as_ref().unwrap(),
-            codec,
-            server,
-        ) {
-            panic!("salt does not match!");
-        }
-    } else {
-        let verify_token = packet.verify_token.unwrap();
-        let verify_token = server.encryption().decrypt(&verify_token).unwrap();
-        if !server.encryption().compare_verify_tokens(&verify_token) {
-            panic!("verify tokens do not match.");
-        }
+    // if !packet.has_verify_token {
+    //     if !verify_salt(
+    //         packet.salt.unwrap(),
+    //         packet.message_signature.as_ref().unwrap(),
+    //         codec,
+    //         server,
+    //     ) {
+    //         panic!("salt does not match!");
+    //     }
+    // } else {
+    let verify_token = packet.verify_token;
+    let verify_token = server.encryption().decrypt(&verify_token).unwrap();
+    if !server.encryption().compare_verify_tokens(&verify_token) {
+        panic!("verify tokens do not match.");
+        // }
     }
 
     codec.enable_encryption(shared_secret.try_into().unwrap());
@@ -99,10 +103,10 @@ fn verify_salt(
 pub(crate) async fn join_player(codec: &mut ClientCodec,
                                 server: &Server) {
     codec.set_stage(ProtocolStage::Play);
-    let mut registry_codec = ByteBuffer::from_bytes(include_bytes!("../../../codecs/registry_codec.nbt"));
+    let mut registry_codec = ByteBuffer::from_bytes(include_bytes!("../../../codecs/1.19.4/registry-1.19.4.nbt"));
     let registry_codec = Blob::from_reader(&mut registry_codec).unwrap();
     let play = LoginPlay {
-        entity_id: 0,
+        entity_id: ENTITY_ID_COUNTER.fetch_add(1, SeqCst) as i32,
         is_hardcore: false,
         game_mode: server.properties().game().default_gamemode().ordinal() as u8,
         previous_gamemode: -1,
@@ -131,15 +135,6 @@ pub(crate) async fn join_player(codec: &mut ClientCodec,
         }),
     };
     codec.write_packet(&play).await.unwrap();
-
-    // codec.write_packet(&SetDefaultSpawnPosition {
-    //     position: Position {
-    //         x: 10,
-    //         y: 10,
-    //         z: 10,
-    //     },
-    //     angle: 3.0,
-    // }).await.unwrap();
 }
 
 pub(crate) async fn handle_login_start(
@@ -148,9 +143,9 @@ pub(crate) async fn handle_login_start(
     server: &Server,
 ) {
     let name = packet.name;
-    let public_key = packet.public_key.unwrap();
-    let public_key = RsaPublicKey::from_public_key_der(public_key.as_slice()).unwrap();
-    codec.set_public_key(Some(public_key));
+    let public_key = server.encryption().public_key.clone();
+    // let public_key = RsaPublicKey::from_public_key_der(public_key.as_slice()).unwrap();
+    codec.set_public_key(public_key);
     if *server.properties().server().online_mode() {
         codec
             .write_packet(&EncryptionRequest {
@@ -171,7 +166,7 @@ pub(crate) async fn handle_login_start(
         codec.set_profile(Some(success.profile));
         server.finish_login(codec).await;
     }
-    codec.set_player_name(Some(name));
+    codec.set_player_name(name);
 }
 
 pub(crate) async fn handle_ping_request(packet: &PingPacket, codec: &mut ClientCodec) {
@@ -186,8 +181,8 @@ pub(crate) async fn handle_status_request(
 ) {
     let response = Response {
         version: RespVersion {
-            name: "1.19.2".to_string(),
-            protocol: 760,
+            name: "1.19.4".to_string(),
+            protocol: 762,
         },
         players: RespPlayers {
             max: *server.properties().status().max_players(),

@@ -1,22 +1,26 @@
 use std::io::Result;
 
+use bytes::BytesMut;
 use flume::{Receiver, Sender};
 use rsa::RsaPublicKey;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
-use bytebuffer::ByteBuffer;
 use crate::chat::text_component::TextComponent;
-use crate::protocol::Clientbound;
-use crate::protocol::compression::{read_packet, write_packet};
+use crate::protocol::compression::{read_packet, write_packet, read_compressed_packet_buf, read_uncompressed_packet};
 use crate::protocol::fields::numeric::VarInt;
 use crate::protocol::fields::profile::GameProfile;
+use crate::protocol::Clientbound;
+use bytebuffer::ByteBuffer;
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use crate::encryption::client::ClientEncryption;
 use crate::net::handler::PacketHandler;
 use crate::packets::login::{DisconnectLogin, SetCompressionPacket};
 use crate::packets::play::DisconnectPlay;
 use crate::Server;
+
+use super::client::Packet;
 
 /// A client codec is responsible for writing clientbound packets
 /// to a TCP stream, with optional compression.
@@ -57,6 +61,7 @@ pub enum ProtocolStage {
 }
 
 impl ClientCodec {
+
     pub fn new(conn: TcpStream) -> Self {
         Self {
             threshold: None,
@@ -76,15 +81,21 @@ impl ClientCodec {
 
     pub async fn enable_compression(&mut self, threshold: u32) {
         self.write_packet(&SetCompressionPacket {
-            threshold: VarInt(threshold as i32)
-        }).await.unwrap();
+            threshold: VarInt(threshold as i32),
+        })
+        .await
+        .unwrap();
         self.threshold = Some(threshold as i32);
     }
 
+    /// Disconnects the client with the given message
     pub async fn disconnect(&mut self, reason: &str) {
         let reason = TextComponent::plain(reason);
         match self.stage {
-            ProtocolStage::Login => self.write_packet(&DisconnectLogin { reason }).await.unwrap(),
+            ProtocolStage::Login => self
+                .write_packet(&DisconnectLogin { reason })
+                .await
+                .unwrap(),
             ProtocolStage::Play => self.write_packet(&DisconnectPlay { reason }).await.unwrap(),
             _ => {}
         }
@@ -110,27 +121,49 @@ impl ClientCodec {
         self.stage = stage;
     }
 
-    pub async fn accept(&mut self) {
-        let mut buf = Vec::with_capacity(1024);
+    pub async fn accept(&mut self) -> Result<Option<Packet>> {
+        // TODO: re-use the buf
+        let mut buf = BytesMut::with_capacity(1024);
         match self.conn.read_buf(&mut buf).await {
-            Ok(n) if n == 0 => return,
-            Ok(n) => n,
-            Err(e) => return,
-        };
-
-        if self.encryption().is_some() {
-            self.decrypt(buf.as_mut());
+            Ok(0) => return Ok(None),
+            Ok(_) => {}
+            Err(e) => return Err(e.into()),
         }
 
-        let mut buf = ByteBuffer::from_vec(buf);
-        while buf.has_data() {
-            let threshold = self.threshold.unwrap_or(-1);
-            let p = read_packet(&mut buf, threshold).map(|t| Some(t));
-            if let Ok(Some(v)) = p {
-                self.packets.0.send_async(v).await.unwrap();
-            }
+        if let Some(encryption) = &mut self.encryption {
+            encryption.decrypt(&mut buf)
         }
+
+        let packet = if let Some(threshold) = self.threshold {
+            read_compressed_packet_buf(&mut buf)
+        } else {
+            read_uncompressed_packet(&mut buf)
+        }?;
+
+        Ok(Some(packet))
     }
+
+    // pub async fn accept(&mut self) {
+    //     let mut buf = Vec::with_capacity(1024);
+    //     match self.conn.read_buf(&mut buf).await {
+    //         Ok(n) if n == 0 => return,
+    //         Ok(n) => n,
+    //         Err(e) => return,
+    //     };
+
+    //     if self.encryption().is_some() {
+    //         self.decrypt(buf.as_mut());
+    //     }
+
+    //     let mut buf = ByteBuffer::from_vec(buf);
+    //     while buf.has_data() {
+    //         let threshold = self.threshold.unwrap_or(-1);
+    //         let p = read_packet(&mut buf, threshold).map(|t| Some(t));
+    //         if let Ok(Some(v)) = p {
+    //             self.packets.0.send_async(v).await.unwrap();
+    //         }
+    //     }
+    // }
 
     pub fn incoming_packets(&self) -> Receiver<(i32, Vec<u8>)> {
         self.packets.1.clone()
@@ -152,8 +185,8 @@ impl ClientCodec {
         &self.player_name
     }
 
-    pub fn set_player_name(&mut self, player_name: Option<String>) {
-        self.player_name = player_name;
+    pub fn set_player_name(&mut self, player_name: String) {
+        self.player_name = Some(player_name);
     }
 
     pub fn set_profile(&mut self, profile: Option<GameProfile>) {
@@ -164,8 +197,8 @@ impl ClientCodec {
         &self.public_key
     }
 
-    pub fn set_public_key(&mut self, public_key: Option<RsaPublicKey>) {
-        self.public_key = public_key;
+    pub fn set_public_key(&mut self, public_key: RsaPublicKey) {
+        self.public_key = Some(public_key);
     }
 
     pub fn encryption(&self) -> &Option<ClientEncryption> {

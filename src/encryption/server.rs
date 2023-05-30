@@ -4,7 +4,7 @@ use rsa::{errors::Result, PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey}
 
 pub struct ServerEncryption {
     private_key: RsaPrivateKey,
-    public_key: RsaPublicKey,
+    pub(crate) public_key: RsaPublicKey,
     verify_token: Vec<u8>,
 }
 

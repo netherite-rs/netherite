@@ -1,0 +1,2241 @@
+{
+  "minecraft:trim_pattern": {
+    "type": "minecraft:trim_pattern",
+    "value": []
+  },
+  "minecraft:trim_material": {
+    "type": "minecraft:trim_material",
+    "value": []
+  },
+  "minecraft:damage_type": {
+    "value": [
+      {
+        "id": 0,
+        "name": "minecraft:arrow",
+        "element": {
+          "message_id": "arrow",
+          "exhaustion": 0.1,
+          "scaling": "when_caused_by_living_non_player"
+        }
+      },
+      {
+        "name": "minecraft:bad_respawn_point",
+        "id": 1,
+        "element": {
+          "scaling": "always",
+          "death_message_type": "intentional_game_design",
+          "exhaustion": 0.1,
+          "message_id": "badRespawnPoint"
+        }
+      },
+      {
+        "name": "minecraft:cactus",
+        "id": 2,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1,
+          "message_id": "cactus"
+        }
+      },
+      {
+        "id": 3,
+        "element": {
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "cramming"
+        },
+        "name": "minecraft:cramming"
+      },
+      {
+        "id": 4,
+        "name": "minecraft:dragon_breath",
+        "element": {
+          "message_id": "dragonBreath",
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player"
+        }
+      },
+      {
+        "name": "minecraft:drown",
+        "id": 5,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "drown",
+          "exhaustion": 0,
+          "effects": "drowning"
+        }
+      },
+      {
+        "name": "minecraft:dry_out",
+        "id": 6,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "dryout",
+          "exhaustion": 0.1
+        }
+      },
+      {
+        "name": "minecraft:explosion",
+        "id": 7,
+        "element": {
+          "scaling": "always",
+          "message_id": "explosion",
+          "exhaustion": 0.1
+        }
+      },
+      {
+        "id": 8,
+        "name": "minecraft:fall",
+        "element": {
+          "message_id": "fall",
+          "death_message_type": "fall_variants",
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player"
+        }
+      },
+      {
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1,
+          "message_id": "anvil"
+        },
+        "name": "minecraft:falling_anvil",
+        "id": 9
+      },
+      {
+        "element": {
+          "message_id": "fallingBlock",
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1
+        },
+        "id": 10,
+        "name": "minecraft:falling_block"
+      },
+      {
+        "id": 11,
+        "element": {
+          "message_id": "fallingStalactite",
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1
+        },
+        "name": "minecraft:falling_stalactite"
+      },
+      {
+        "name": "minecraft:fireball",
+        "element": {
+          "effects": "burning",
+          "exhaustion": 0.1,
+          "message_id": "fireball",
+          "scaling": "when_caused_by_living_non_player"
+        },
+        "id": 12
+      },
+      {
+        "name": "minecraft:fireworks",
+        "id": 13,
+        "element": {
+          "message_id": "fireworks",
+          "exhaustion": 0.1,
+          "scaling": "when_caused_by_living_non_player"
+        }
+      },
+      {
+        "id": 14,
+        "element": {
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "flyIntoWall"
+        },
+        "name": "minecraft:fly_into_wall"
+      },
+      {
+        "name": "minecraft:freeze",
+        "id": 15,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0,
+          "effects": "freezing",
+          "message_id": "freeze"
+        }
+      },
+      {
+        "name": "minecraft:generic",
+        "id": 16,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "generic",
+          "exhaustion": 0
+        }
+      },
+      {
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "hotFloor",
+          "effects": "burning",
+          "exhaustion": 0.1
+        },
+        "name": "minecraft:hot_floor",
+        "id": 17
+      },
+      {
+        "name": "minecraft:in_fire",
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "effects": "burning",
+          "exhaustion": 0.1,
+          "message_id": "inFire"
+        },
+        "id": 18
+      },
+      {
+        "name": "minecraft:in_wall",
+        "element": {
+          "message_id": "inWall",
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0
+        },
+        "id": 19
+      },
+      {
+        "name": "minecraft:indirect_magic",
+        "id": 20,
+        "element": {
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "indirectMagic"
+        }
+      },
+      {
+        "name": "minecraft:lava",
+        "element": {
+          "exhaustion": 0.1,
+          "message_id": "lava",
+          "effects": "burning",
+          "scaling": "when_caused_by_living_non_player"
+        },
+        "id": 21
+      },
+      {
+        "name": "minecraft:lightning_bolt",
+        "element": {
+          "message_id": "lightningBolt",
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1
+        },
+        "id": 22
+      },
+      {
+        "id": 23,
+        "element": {
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "magic"
+        },
+        "name": "minecraft:magic"
+      },
+      {
+        "name": "minecraft:mob_attack",
+        "element": {
+          "message_id": "mob",
+          "exhaustion": 0.1,
+          "scaling": "when_caused_by_living_non_player"
+        },
+        "id": 24
+      },
+      {
+        "name": "minecraft:mob_attack_no_aggro",
+        "id": 25,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1,
+          "message_id": "mob"
+        }
+      },
+      {
+        "name": "minecraft:mob_projectile",
+        "id": 26,
+        "element": {
+          "message_id": "mob",
+          "exhaustion": 0.1,
+          "scaling": "when_caused_by_living_non_player"
+        }
+      },
+      {
+        "name": "minecraft:on_fire",
+        "id": 27,
+        "element": {
+          "message_id": "onFire",
+          "scaling": "when_caused_by_living_non_player",
+          "effects": "burning",
+          "exhaustion": 0
+        }
+      },
+      {
+        "name": "minecraft:out_of_world",
+        "id": 28,
+        "element": {
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "outOfWorld"
+        }
+      },
+      {
+        "id": 29,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1,
+          "message_id": "player"
+        },
+        "name": "minecraft:player_attack"
+      },
+      {
+        "name": "minecraft:player_explosion",
+        "id": 30,
+        "element": {
+          "exhaustion": 0.1,
+          "scaling": "always",
+          "message_id": "explosion.player"
+        }
+      },
+      {
+        "id": 31,
+        "name": "minecraft:sonic_boom",
+        "element": {
+          "scaling": "always",
+          "message_id": "sonic_boom",
+          "exhaustion": 0
+        }
+      },
+      {
+        "id": 32,
+        "element": {
+          "exhaustion": 0,
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "stalagmite"
+        },
+        "name": "minecraft:stalagmite"
+      },
+      {
+        "name": "minecraft:starve",
+        "id": 33,
+        "element": {
+          "message_id": "starve",
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0
+        }
+      },
+      {
+        "name": "minecraft:sting",
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1,
+          "message_id": "sting"
+        },
+        "id": 34
+      },
+      {
+        "id": 35,
+        "element": {
+          "exhaustion": 0.1,
+          "message_id": "sweetBerryBush",
+          "scaling": "when_caused_by_living_non_player",
+          "effects": "poking"
+        },
+        "name": "minecraft:sweet_berry_bush"
+      },
+      {
+        "id": 36,
+        "name": "minecraft:thorns",
+        "element": {
+          "effects": "thorns",
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "thorns",
+          "exhaustion": 0.1
+        }
+      },
+      {
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "thrown",
+          "exhaustion": 0.1
+        },
+        "id": 37,
+        "name": "minecraft:thrown"
+      },
+      {
+        "name": "minecraft:trident",
+        "id": 38,
+        "element": {
+          "exhaustion": 0.1,
+          "scaling": "when_caused_by_living_non_player",
+          "message_id": "trident"
+        }
+      },
+      {
+        "id": 39,
+        "element": {
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1,
+          "effects": "burning",
+          "message_id": "onFire"
+        },
+        "name": "minecraft:unattributed_fireball"
+      },
+      {
+        "name": "minecraft:wither",
+        "id": 40,
+        "element": {
+          "message_id": "wither",
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0
+        }
+      },
+      {
+        "element": {
+          "message_id": "witherSkull",
+          "scaling": "when_caused_by_living_non_player",
+          "exhaustion": 0.1
+        },
+        "name": "minecraft:wither_skull",
+        "id": 41
+      }
+    ],
+    "type": "minecraft:damage_type"
+  },
+  "minecraft:worldgen/biome": {
+    "value": [
+      {
+        "element": {
+          "effects": {
+            "fog_color": 12638463,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "offset": 2,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "foliage_color": 10387789,
+            "sky_color": 7254527,
+            "water_fog_color": 329011,
+            "grass_color": 9470285,
+            "water_color": 4159204
+          },
+          "has_precipitation": 0,
+          "temperature": 2,
+          "downfall": 0
+        },
+        "id": 0,
+        "name": "minecraft:badlands"
+      },
+      {
+        "id": 1,
+        "name": "minecraft:bamboo_jungle",
+        "element": {
+          "temperature": 0.95,
+          "downfall": 0.9,
+          "effects": {
+            "fog_color": 12638463,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2
+            },
+            "music": {
+              "sound": "minecraft:music.overworld.jungle_and_forest",
+              "min_delay": 12000,
+              "replace_current_music": 0,
+              "max_delay": 24000
+            },
+            "sky_color": 7842047,
+            "water_fog_color": 329011,
+            "water_color": 4159204
+          },
+          "has_precipitation": 1
+        }
+      },
+      {
+        "element": {
+          "has_precipitation": 0,
+          "effects": {
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.basalt_deltas.mood"
+            },
+            "music": {
+              "replace_current_music": 0,
+              "sound": "minecraft:music.nether.basalt_deltas",
+              "min_delay": 12000,
+              "max_delay": 24000
+            },
+            "ambient_sound": "minecraft:ambient.basalt_deltas.loop",
+            "particle": {
+              "probability": 0.118093334,
+              "options": {
+                "type": "minecraft:white_ash"
+              }
+            },
+            "fog_color": 6840176,
+            "additions_sound": {
+              "sound": "minecraft:ambient.basalt_deltas.additions",
+              "tick_chance": 0.0111
+            },
+            "water_color": 4159204,
+            "water_fog_color": 329011,
+            "sky_color": 7254527
+          },
+          "temperature": 2,
+          "downfall": 0
+        },
+        "id": 2,
+        "name": "minecraft:basalt_deltas"
+      },
+      {
+        "name": "minecraft:beach",
+        "element": {
+          "has_precipitation": 1,
+          "temperature": 0.8,
+          "downfall": 0.4,
+          "effects": {
+            "water_fog_color": 329011,
+            "sky_color": 7907327,
+            "water_color": 4159204,
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000
+            },
+            "fog_color": 12638463
+          }
+        },
+        "id": 3
+      },
+      {
+        "name": "minecraft:birch_forest",
+        "element": {
+          "temperature": 0.6,
+          "downfall": 0.6,
+          "effects": {
+            "music": {
+              "sound": "minecraft:music.overworld.jungle_and_forest",
+              "replace_current_music": 0,
+              "min_delay": 12000,
+              "max_delay": 24000
+            },
+            "water_fog_color": 329011,
+            "water_color": 4159204,
+            "fog_color": 12638463,
+            "sky_color": 8037887,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "block_search_extent": 8
+            }
+          },
+          "has_precipitation": 1
+        },
+        "id": 4
+      },
+      {
+        "name": "minecraft:cold_ocean",
+        "element": {
+          "downfall": 0.5,
+          "has_precipitation": 1,
+          "temperature": 0.5,
+          "effects": {
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "water_color": 4020182,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "offset": 2,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "sky_color": 8103167
+          }
+        },
+        "id": 5
+      },
+      {
+        "element": {
+          "downfall": 0,
+          "temperature": 2,
+          "effects": {
+            "fog_color": 3343107,
+            "sky_color": 7254527,
+            "additions_sound": {
+              "sound": "minecraft:ambient.crimson_forest.additions",
+              "tick_chance": 0.0111
+            },
+            "mood_sound": {
+              "offset": 2,
+              "sound": "minecraft:ambient.crimson_forest.mood",
+              "tick_delay": 6000,
+              "block_search_extent": 8
+            },
+            "music": {
+              "max_delay": 24000,
+              "sound": "minecraft:music.nether.crimson_forest",
+              "min_delay": 12000,
+              "replace_current_music": 0
+            },
+            "particle": {
+              "probability": 0.025,
+              "options": {
+                "type": "minecraft:crimson_spore"
+              }
+            },
+            "ambient_sound": "minecraft:ambient.crimson_forest.loop",
+            "water_fog_color": 329011,
+            "water_color": 4159204
+          },
+          "has_precipitation": 0
+        },
+        "name": "minecraft:crimson_forest",
+        "id": 6
+      },
+      {
+        "id": 7,
+        "element": {
+          "downfall": 0.8,
+          "effects": {
+            "grass_color_modifier": "dark_forest",
+            "fog_color": 12638463,
+            "sky_color": 7972607,
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2
+            },
+            "water_fog_color": 329011,
+            "music": {
+              "sound": "minecraft:music.overworld.jungle_and_forest",
+              "min_delay": 12000,
+              "replace_current_music": 0,
+              "max_delay": 24000
+            },
+            "water_color": 4159204
+          },
+          "temperature": 0.7,
+          "has_precipitation": 1
+        },
+        "name": "minecraft:dark_forest"
+      },
+      {
+        "id": 8,
+        "element": {
+          "effects": {
+            "water_color": 4020182,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2
+            },
+            "sky_color": 8103167
+          },
+          "downfall": 0.5,
+          "temperature": 0.5,
+          "has_precipitation": 1
+        },
+        "name": "minecraft:deep_cold_ocean"
+      },
+      {
+        "name": "minecraft:deep_dark",
+        "element": {
+          "downfall": 0.4,
+          "has_precipitation": 1,
+          "effects": {
+            "water_color": 4159204,
+            "mood_sound": {
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8,
+              "tick_delay": 6000
+            },
+            "sky_color": 7907327,
+            "music": {
+              "min_delay": 12000,
+              "max_delay": 24000,
+              "sound": "minecraft:music.overworld.deep_dark",
+              "replace_current_music": 0
+            },
+            "water_fog_color": 329011,
+            "fog_color": 12638463
+          },
+          "temperature": 0.8
+        },
+        "id": 9
+      },
+      {
+        "name": "minecraft:deep_frozen_ocean",
+        "element": {
+          "temperature": 0.5,
+          "effects": {
+            "water_color": 3750089,
+            "mood_sound": {
+              "offset": 2,
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave"
+            },
+            "fog_color": 12638463,
+            "sky_color": 8103167,
+            "water_fog_color": 329011
+          },
+          "downfall": 0.5,
+          "has_precipitation": 1,
+          "temperature_modifier": "frozen"
+        },
+        "id": 10
+      },
+      {
+        "id": 11,
+        "element": {
+          "temperature": 0.5,
+          "downfall": 0.5,
+          "effects": {
+            "water_color": 4566514,
+            "mood_sound": {
+              "offset": 2,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8
+            },
+            "water_fog_color": 267827,
+            "sky_color": 8103167,
+            "fog_color": 12638463
+          },
+          "has_precipitation": 1
+        },
+        "name": "minecraft:deep_lukewarm_ocean"
+      },
+      {
+        "id": 12,
+        "name": "minecraft:deep_ocean",
+        "element": {
+          "temperature": 0.5,
+          "effects": {
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2
+            },
+            "water_fog_color": 329011,
+            "water_color": 4159204,
+            "sky_color": 8103167,
+            "fog_color": 12638463
+          },
+          "has_precipitation": 1,
+          "downfall": 0.5
+        }
+      },
+      {
+        "name": "minecraft:desert",
+        "id": 13,
+        "element": {
+          "downfall": 0,
+          "has_precipitation": 0,
+          "temperature": 2,
+          "effects": {
+            "mood_sound": {
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_fog_color": 329011,
+            "sky_color": 7254527,
+            "water_color": 4159204,
+            "fog_color": 12638463
+          }
+        }
+      },
+      {
+        "name": "minecraft:dripstone_caves",
+        "id": 14,
+        "element": {
+          "has_precipitation": 1,
+          "temperature": 0.8,
+          "downfall": 0.4,
+          "effects": {
+            "music": {
+              "sound": "minecraft:music.overworld.dripstone_caves",
+              "replace_current_music": 0,
+              "min_delay": 12000,
+              "max_delay": 24000
+            },
+            "water_color": 4159204,
+            "fog_color": 12638463,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "offset": 2
+            },
+            "water_fog_color": 329011,
+            "sky_color": 7907327
+          }
+        }
+      },
+      {
+        "id": 15,
+        "element": {
+          "has_precipitation": 0,
+          "temperature": 0.5,
+          "effects": {
+            "mood_sound": {
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8
+            },
+            "water_fog_color": 329011,
+            "water_color": 4159204,
+            "sky_color": 0,
+            "fog_color": 10518688
+          },
+          "downfall": 0.5
+        },
+        "name": "minecraft:end_barrens"
+      },
+      {
+        "element": {
+          "downfall": 0.5,
+          "has_precipitation": 0,
+          "temperature": 0.5,
+          "effects": {
+            "water_color": 4159204,
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "offset": 2
+            },
+            "sky_color": 0,
+            "water_fog_color": 329011,
+            "fog_color": 10518688
+          }
+        },
+        "id": 16,
+        "name": "minecraft:end_highlands"
+      },
+      {
+        "id": 17,
+        "name": "minecraft:end_midlands",
+        "element": {
+          "has_precipitation": 0,
+          "temperature": 0.5,
+          "downfall": 0.5,
+          "effects": {
+            "mood_sound": {
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_color": 4159204,
+            "water_fog_color": 329011,
+            "sky_color": 0,
+            "fog_color": 10518688
+          }
+        }
+      },
+      {
+        "element": {
+          "effects": {
+            "grass_color": 9470285,
+            "foliage_color": 10387789,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "sky_color": 7254527,
+            "water_color": 4159204,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2
+            }
+          },
+          "temperature": 2,
+          "has_precipitation": 0,
+          "downfall": 0
+        },
+        "name": "minecraft:eroded_badlands",
+        "id": 18
+      },
+      {
+        "name": "minecraft:flower_forest",
+        "id": 19,
+        "element": {
+          "effects": {
+            "sky_color": 7972607,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "water_color": 4159204,
+            "music": {
+              "replace_current_music": 0,
+              "max_delay": 24000,
+              "min_delay": 12000,
+              "sound": "minecraft:music.overworld.jungle_and_forest"
+            },
+            "mood_sound": {
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "tick_delay": 6000
+            }
+          },
+          "downfall": 0.8,
+          "has_precipitation": 1,
+          "temperature": 0.7
+        }
+      },
+      {
+        "id": 20,
+        "name": "minecraft:forest",
+        "element": {
+          "has_precipitation": 1,
+          "effects": {
+            "music": {
+              "min_delay": 12000,
+              "max_delay": 24000,
+              "replace_current_music": 0,
+              "sound": "minecraft:music.overworld.jungle_and_forest"
+            },
+            "water_color": 4159204,
+            "fog_color": 12638463,
+            "mood_sound": {
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8
+            },
+            "sky_color": 7972607,
+            "water_fog_color": 329011
+          },
+          "temperature": 0.7,
+          "downfall": 0.8
+        }
+      },
+      {
+        "element": {
+          "temperature": 0,
+          "downfall": 0.5,
+          "effects": {
+            "fog_color": 12638463,
+            "sky_color": 8364543,
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000
+            },
+            "water_color": 3750089,
+            "water_fog_color": 329011
+          },
+          "temperature_modifier": "frozen",
+          "has_precipitation": 1
+        },
+        "name": "minecraft:frozen_ocean",
+        "id": 21
+      },
+      {
+        "name": "minecraft:frozen_peaks",
+        "element": {
+          "downfall": 0.9,
+          "effects": {
+            "mood_sound": {
+              "block_search_extent": 8,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000
+            },
+            "sky_color": 8756735,
+            "water_fog_color": 329011,
+            "water_color": 4159204,
+            "music": {
+              "sound": "minecraft:music.overworld.frozen_peaks",
+              "max_delay": 24000,
+              "min_delay": 12000,
+              "replace_current_music": 0
+            },
+            "fog_color": 12638463
+          },
+          "temperature": -0.7,
+          "has_precipitation": 1
+        },
+        "id": 22
+      },
+      {
+        "name": "minecraft:frozen_river",
+        "id": 23,
+        "element": {
+          "downfall": 0.5,
+          "has_precipitation": 1,
+          "effects": {
+            "sky_color": 8364543,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "offset": 2,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_fog_color": 329011,
+            "water_color": 3750089,
+            "fog_color": 12638463
+          },
+          "temperature": 0
+        }
+      },
+      {
+        "id": 24,
+        "element": {
+          "has_precipitation": 1,
+          "downfall": 0.8,
+          "effects": {
+            "fog_color": 12638463,
+            "music": {
+              "min_delay": 12000,
+              "max_delay": 24000,
+              "sound": "minecraft:music.overworld.grove",
+              "replace_current_music": 0
+            },
+            "water_color": 4159204,
+            "water_fog_color": 329011,
+            "mood_sound": {
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8,
+              "tick_delay": 6000
+            },
+            "sky_color": 8495359
+          },
+          "temperature": -0.2
+        },
+        "name": "minecraft:grove"
+      },
+      {
+        "id": 25,
+        "element": {
+          "temperature": 0,
+          "has_precipitation": 1,
+          "downfall": 0.5,
+          "effects": {
+            "mood_sound": {
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2
+            },
+            "sky_color": 8364543,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "water_color": 4159204
+          }
+        },
+        "name": "minecraft:ice_spikes"
+      },
+      {
+        "id": 26,
+        "name": "minecraft:jagged_peaks",
+        "element": {
+          "effects": {
+            "water_color": 4159204,
+            "sky_color": 8756735,
+            "water_fog_color": 329011,
+            "music": {
+              "min_delay": 12000,
+              "sound": "minecraft:music.overworld.jagged_peaks",
+              "replace_current_music": 0,
+              "max_delay": 24000
+            },
+            "fog_color": 12638463,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "block_search_extent": 8
+            }
+          },
+          "has_precipitation": 1,
+          "temperature": -0.7,
+          "downfall": 0.9
+        }
+      },
+      {
+        "name": "minecraft:jungle",
+        "id": 27,
+        "element": {
+          "effects": {
+            "fog_color": 12638463,
+            "sky_color": 7842047,
+            "music": {
+              "max_delay": 24000,
+              "replace_current_music": 0,
+              "sound": "minecraft:music.overworld.jungle_and_forest",
+              "min_delay": 12000
+            },
+            "mood_sound": {
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8
+            },
+            "water_color": 4159204,
+            "water_fog_color": 329011
+          },
+          "temperature": 0.95,
+          "downfall": 0.9,
+          "has_precipitation": 1
+        }
+      },
+      {
+        "element": {
+          "downfall": 0.5,
+          "has_precipitation": 1,
+          "temperature": 0.5,
+          "effects": {
+            "water_color": 4566514,
+            "water_fog_color": 267827,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "offset": 2,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave"
+            },
+            "sky_color": 8103167,
+            "fog_color": 12638463
+          }
+        },
+        "name": "minecraft:lukewarm_ocean",
+        "id": 28
+      },
+      {
+        "id": 29,
+        "name": "minecraft:lush_caves",
+        "element": {
+          "temperature": 0.5,
+          "downfall": 0.5,
+          "has_precipitation": 1,
+          "effects": {
+            "water_fog_color": 329011,
+            "sky_color": 8103167,
+            "water_color": 4159204,
+            "music": {
+              "max_delay": 24000,
+              "min_delay": 12000,
+              "sound": "minecraft:music.overworld.lush_caves",
+              "replace_current_music": 0
+            },
+            "fog_color": 12638463,
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            }
+          }
+        }
+      },
+      {
+        "element": {
+          "effects": {
+            "foliage_color": 9285927,
+            "fog_color": 12638463,
+            "water_color": 3832426,
+            "sky_color": 7907327,
+            "music": {
+              "replace_current_music": 0,
+              "min_delay": 12000,
+              "sound": "minecraft:music.overworld.swamp",
+              "max_delay": 24000
+            },
+            "mood_sound": {
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "block_search_extent": 8
+            },
+            "water_fog_color": 5077600,
+            "grass_color_modifier": "swamp"
+          },
+          "has_precipitation": 1,
+          "downfall": 0.9,
+          "temperature": 0.8
+        },
+        "id": 30,
+        "name": "minecraft:mangrove_swamp"
+      },
+      {
+        "element": {
+          "temperature": 0.5,
+          "downfall": 0.8,
+          "effects": {
+            "water_fog_color": 329011,
+            "music": {
+              "min_delay": 12000,
+              "sound": "minecraft:music.overworld.meadow",
+              "replace_current_music": 0,
+              "max_delay": 24000
+            },
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_color": 937679,
+            "fog_color": 12638463,
+            "sky_color": 8103167
+          },
+          "has_precipitation": 1
+        },
+        "id": 31,
+        "name": "minecraft:meadow"
+      },
+      {
+        "id": 32,
+        "element": {
+          "effects": {
+            "sky_color": 7842047,
+            "water_fog_color": 329011,
+            "water_color": 4159204,
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "fog_color": 12638463
+          },
+          "downfall": 1,
+          "has_precipitation": 1,
+          "temperature": 0.9
+        },
+        "name": "minecraft:mushroom_fields"
+      },
+      {
+        "element": {
+          "temperature": 2,
+          "downfall": 0,
+          "has_precipitation": 0,
+          "effects": {
+            "fog_color": 3344392,
+            "water_color": 4159204,
+            "ambient_sound": "minecraft:ambient.nether_wastes.loop",
+            "mood_sound": {
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "offset": 2,
+              "sound": "minecraft:ambient.nether_wastes.mood"
+            },
+            "additions_sound": {
+              "sound": "minecraft:ambient.nether_wastes.additions",
+              "tick_chance": 0.0111
+            },
+            "water_fog_color": 329011,
+            "music": {
+              "max_delay": 24000,
+              "replace_current_music": 0,
+              "sound": "minecraft:music.nether.nether_wastes",
+              "min_delay": 12000
+            },
+            "sky_color": 7254527
+          }
+        },
+        "id": 33,
+        "name": "minecraft:nether_wastes"
+      },
+      {
+        "element": {
+          "has_precipitation": 1,
+          "downfall": 0.5,
+          "temperature": 0.5,
+          "effects": {
+            "mood_sound": {
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2
+            },
+            "water_color": 4159204,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "sky_color": 8103167
+          }
+        },
+        "name": "minecraft:ocean",
+        "id": 34
+      },
+      {
+        "id": 35,
+        "name": "minecraft:old_growth_birch_forest",
+        "element": {
+          "effects": {
+            "fog_color": 12638463,
+            "water_color": 4159204,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "offset": 2,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_fog_color": 329011,
+            "sky_color": 8037887,
+            "music": {
+              "max_delay": 24000,
+              "min_delay": 12000,
+              "replace_current_music": 0,
+              "sound": "minecraft:music.overworld.jungle_and_forest"
+            }
+          },
+          "downfall": 0.6,
+          "temperature": 0.6,
+          "has_precipitation": 1
+        }
+      },
+      {
+        "name": "minecraft:old_growth_pine_taiga",
+        "id": 36,
+        "element": {
+          "downfall": 0.8,
+          "temperature": 0.3,
+          "effects": {
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "sky_color": 8168447,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000
+            },
+            "water_color": 4159204,
+            "music": {
+              "max_delay": 24000,
+              "replace_current_music": 0,
+              "min_delay": 12000,
+              "sound": "minecraft:music.overworld.old_growth_taiga"
+            }
+          },
+          "has_precipitation": 1
+        }
+      },
+      {
+        "name": "minecraft:old_growth_spruce_taiga",
+        "id": 37,
+        "element": {
+          "downfall": 0.8,
+          "has_precipitation": 1,
+          "effects": {
+            "water_color": 4159204,
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_fog_color": 329011,
+            "music": {
+              "sound": "minecraft:music.overworld.old_growth_taiga",
+              "min_delay": 12000,
+              "max_delay": 24000,
+              "replace_current_music": 0
+            },
+            "sky_color": 8233983,
+            "fog_color": 12638463
+          },
+          "temperature": 0.25
+        }
+      },
+      {
+        "id": 38,
+        "element": {
+          "temperature": 0.8,
+          "downfall": 0.4,
+          "effects": {
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "tick_delay": 6000,
+              "block_search_extent": 8
+            },
+            "water_color": 4159204,
+            "fog_color": 12638463,
+            "water_fog_color": 329011,
+            "sky_color": 7907327
+          },
+          "has_precipitation": 1
+        },
+        "name": "minecraft:plains"
+      },
+      {
+        "element": {
+          "temperature": 0.5,
+          "effects": {
+            "sky_color": 8103167,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "offset": 2
+            },
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "water_color": 4159204
+          },
+          "downfall": 0.5,
+          "has_precipitation": 1
+        },
+        "id": 39,
+        "name": "minecraft:river"
+      },
+      {
+        "element": {
+          "temperature": 2,
+          "has_precipitation": 0,
+          "downfall": 0,
+          "effects": {
+            "mood_sound": {
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "offset": 2
+            },
+            "water_color": 4159204,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "sky_color": 7254527
+          }
+        },
+        "name": "minecraft:savanna",
+        "id": 40
+      },
+      {
+        "element": {
+          "downfall": 0,
+          "temperature": 2,
+          "has_precipitation": 0,
+          "effects": {
+            "sky_color": 7254527,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "water_color": 4159204,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave"
+            }
+          }
+        },
+        "id": 41,
+        "name": "minecraft:savanna_plateau"
+      },
+      {
+        "id": 42,
+        "name": "minecraft:small_end_islands",
+        "element": {
+          "has_precipitation": 0,
+          "temperature": 0.5,
+          "downfall": 0.5,
+          "effects": {
+            "water_color": 4159204,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_fog_color": 329011,
+            "fog_color": 10518688,
+            "sky_color": 0
+          }
+        }
+      },
+      {
+        "id": 43,
+        "element": {
+          "temperature": 0.05,
+          "has_precipitation": 1,
+          "downfall": 0.3,
+          "effects": {
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2
+            },
+            "sky_color": 8364543,
+            "fog_color": 12638463,
+            "water_fog_color": 329011,
+            "water_color": 4020182
+          }
+        },
+        "name": "minecraft:snowy_beach"
+      },
+      {
+        "element": {
+          "downfall": 0.5,
+          "temperature": 0,
+          "effects": {
+            "fog_color": 12638463,
+            "sky_color": 8364543,
+            "water_fog_color": 329011,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_color": 4159204
+          },
+          "has_precipitation": 1
+        },
+        "id": 44,
+        "name": "minecraft:snowy_plains"
+      },
+      {
+        "element": {
+          "has_precipitation": 1,
+          "temperature": -0.3,
+          "effects": {
+            "fog_color": 12638463,
+            "water_fog_color": 329011,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8,
+              "offset": 2
+            },
+            "sky_color": 8560639,
+            "music": {
+              "max_delay": 24000,
+              "replace_current_music": 0,
+              "min_delay": 12000,
+              "sound": "minecraft:music.overworld.snowy_slopes"
+            },
+            "water_color": 4159204
+          },
+          "downfall": 0.9
+        },
+        "name": "minecraft:snowy_slopes",
+        "id": 45
+      },
+      {
+        "id": 46,
+        "name": "minecraft:snowy_taiga",
+        "element": {
+          "has_precipitation": 1,
+          "downfall": 0.4,
+          "effects": {
+            "sky_color": 8625919,
+            "water_fog_color": 329011,
+            "water_color": 4020182,
+            "fog_color": 12638463,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000
+            }
+          },
+          "temperature": -0.5
+        }
+      },
+      {
+        "element": {
+          "downfall": 0,
+          "effects": {
+            "mood_sound": {
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2,
+              "sound": "minecraft:ambient.soul_sand_valley.mood"
+            },
+            "water_color": 4159204,
+            "ambient_sound": "minecraft:ambient.soul_sand_valley.loop",
+            "fog_color": 1787717,
+            "sky_color": 7254527,
+            "water_fog_color": 329011,
+            "music": {
+              "sound": "minecraft:music.nether.soul_sand_valley",
+              "max_delay": 24000,
+              "min_delay": 12000,
+              "replace_current_music": 0
+            },
+            "particle": {
+              "options": {
+                "type": "minecraft:ash"
+              },
+              "probability": 0.00625
+            },
+            "additions_sound": {
+              "sound": "minecraft:ambient.soul_sand_valley.additions",
+              "tick_chance": 0.0111
+            }
+          },
+          "temperature": 2,
+          "has_precipitation": 0
+        },
+        "id": 47,
+        "name": "minecraft:soul_sand_valley"
+      },
+      {
+        "element": {
+          "downfall": 0.8,
+          "has_precipitation": 1,
+          "temperature": 0.95,
+          "effects": {
+            "mood_sound": {
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2
+            },
+            "sky_color": 7842047,
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "water_color": 4159204,
+            "music": {
+              "max_delay": 24000,
+              "sound": "minecraft:music.overworld.jungle_and_forest",
+              "min_delay": 12000,
+              "replace_current_music": 0
+            }
+          }
+        },
+        "id": 48,
+        "name": "minecraft:sparse_jungle"
+      },
+      {
+        "element": {
+          "temperature": 1,
+          "effects": {
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "offset": 2,
+              "block_search_extent": 8
+            },
+            "water_fog_color": 329011,
+            "sky_color": 7776511,
+            "water_color": 4159204,
+            "music": {
+              "sound": "minecraft:music.overworld.stony_peaks",
+              "min_delay": 12000,
+              "replace_current_music": 0,
+              "max_delay": 24000
+            },
+            "fog_color": 12638463
+          },
+          "has_precipitation": 1,
+          "downfall": 0.3
+        },
+        "id": 49,
+        "name": "minecraft:stony_peaks"
+      },
+      {
+        "name": "minecraft:stony_shore",
+        "id": 50,
+        "element": {
+          "downfall": 0.3,
+          "has_precipitation": 1,
+          "effects": {
+            "water_fog_color": 329011,
+            "water_color": 4159204,
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000
+            },
+            "sky_color": 8233727,
+            "fog_color": 12638463
+          },
+          "temperature": 0.2
+        }
+      },
+      {
+        "id": 51,
+        "element": {
+          "temperature": 0.8,
+          "downfall": 0.4,
+          "effects": {
+            "water_fog_color": 329011,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "block_search_extent": 8
+            },
+            "fog_color": 12638463,
+            "water_color": 4159204,
+            "sky_color": 7907327
+          },
+          "has_precipitation": 1
+        },
+        "name": "minecraft:sunflower_plains"
+      },
+      {
+        "element": {
+          "has_precipitation": 1,
+          "downfall": 0.9,
+          "effects": {
+            "foliage_color": 6975545,
+            "grass_color_modifier": "swamp",
+            "fog_color": 12638463,
+            "sky_color": 7907327,
+            "water_color": 6388580,
+            "water_fog_color": 2302743,
+            "music": {
+              "min_delay": 12000,
+              "replace_current_music": 0,
+              "max_delay": 24000,
+              "sound": "minecraft:music.overworld.swamp"
+            },
+            "mood_sound": {
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave",
+              "offset": 2
+            }
+          },
+          "temperature": 0.8
+        },
+        "id": 52,
+        "name": "minecraft:swamp"
+      },
+      {
+        "name": "minecraft:taiga",
+        "id": 53,
+        "element": {
+          "has_precipitation": 1,
+          "downfall": 0.8,
+          "effects": {
+            "water_color": 4159204,
+            "fog_color": 12638463,
+            "sky_color": 8233983,
+            "water_fog_color": 329011,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "offset": 2,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave"
+            }
+          },
+          "temperature": 0.25
+        }
+      },
+      {
+        "id": 54,
+        "element": {
+          "downfall": 0.5,
+          "effects": {
+            "fog_color": 10518688,
+            "mood_sound": {
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_fog_color": 329011,
+            "water_color": 4159204,
+            "sky_color": 0
+          },
+          "temperature": 0.5,
+          "has_precipitation": 0
+        },
+        "name": "minecraft:the_end"
+      },
+      {
+        "id": 55,
+        "element": {
+          "temperature": 0.5,
+          "effects": {
+            "mood_sound": {
+              "offset": 2,
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8
+            },
+            "fog_color": 12638463,
+            "sky_color": 8103167,
+            "water_fog_color": 329011,
+            "water_color": 4159204
+          },
+          "downfall": 0.5,
+          "has_precipitation": 0
+        },
+        "name": "minecraft:the_void"
+      },
+      {
+        "id": 56,
+        "element": {
+          "effects": {
+            "fog_color": 12638463,
+            "water_color": 4445678,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "offset": 2,
+              "block_search_extent": 8,
+              "sound": "minecraft:ambient.cave"
+            },
+            "sky_color": 8103167,
+            "water_fog_color": 270131
+          },
+          "temperature": 0.5,
+          "downfall": 0.5,
+          "has_precipitation": 1
+        },
+        "name": "minecraft:warm_ocean"
+      },
+      {
+        "name": "minecraft:warped_forest",
+        "id": 57,
+        "element": {
+          "temperature": 2,
+          "downfall": 0,
+          "effects": {
+            "mood_sound": {
+              "offset": 2,
+              "sound": "minecraft:ambient.warped_forest.mood",
+              "block_search_extent": 8,
+              "tick_delay": 6000
+            },
+            "water_color": 4159204,
+            "additions_sound": {
+              "tick_chance": 0.0111,
+              "sound": "minecraft:ambient.warped_forest.additions"
+            },
+            "ambient_sound": "minecraft:ambient.warped_forest.loop",
+            "sky_color": 7254527,
+            "fog_color": 1705242,
+            "water_fog_color": 329011,
+            "music": {
+              "max_delay": 24000,
+              "replace_current_music": 0,
+              "min_delay": 12000,
+              "sound": "minecraft:music.nether.warped_forest"
+            },
+            "particle": {
+              "options": {
+                "type": "minecraft:warped_spore"
+              },
+              "probability": 0.01428
+            }
+          },
+          "has_precipitation": 0
+        }
+      },
+      {
+        "name": "minecraft:windswept_forest",
+        "id": 58,
+        "element": {
+          "downfall": 0.3,
+          "effects": {
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "offset": 2
+            },
+            "sky_color": 8233727,
+            "water_color": 4159204,
+            "water_fog_color": 329011,
+            "fog_color": 12638463
+          },
+          "has_precipitation": 1,
+          "temperature": 0.2
+        }
+      },
+      {
+        "element": {
+          "temperature": 0.2,
+          "downfall": 0.3,
+          "effects": {
+            "water_color": 4159204,
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "offset": 2,
+              "block_search_extent": 8,
+              "tick_delay": 6000
+            },
+            "fog_color": 12638463,
+            "water_fog_color": 329011,
+            "sky_color": 8233727
+          },
+          "has_precipitation": 1
+        },
+        "name": "minecraft:windswept_gravelly_hills",
+        "id": 59
+      },
+      {
+        "element": {
+          "temperature": 0.2,
+          "effects": {
+            "water_fog_color": 329011,
+            "fog_color": 12638463,
+            "mood_sound": {
+              "tick_delay": 6000,
+              "sound": "minecraft:ambient.cave",
+              "block_search_extent": 8,
+              "offset": 2
+            },
+            "sky_color": 8233727,
+            "water_color": 4159204
+          },
+          "downfall": 0.3,
+          "has_precipitation": 1
+        },
+        "name": "minecraft:windswept_hills",
+        "id": 60
+      },
+      {
+        "name": "minecraft:windswept_savanna",
+        "element": {
+          "effects": {
+            "sky_color": 7254527,
+            "fog_color": 12638463,
+            "water_fog_color": 329011,
+            "mood_sound": {
+              "block_search_extent": 8,
+              "tick_delay": 6000,
+              "offset": 2,
+              "sound": "minecraft:ambient.cave"
+            },
+            "water_color": 4159204
+          },
+          "downfall": 0,
+          "temperature": 2,
+          "has_precipitation": 0
+        },
+        "id": 61
+      },
+      {
+        "id": 62,
+        "element": {
+          "downfall": 0,
+          "has_precipitation": 0,
+          "temperature": 2,
+          "effects": {
+            "foliage_color": 10387789,
+            "sky_color": 7254527,
+            "fog_color": 12638463,
+            "grass_color": 9470285,
+            "mood_sound": {
+              "sound": "minecraft:ambient.cave",
+              "tick_delay": 6000,
+              "block_search_extent": 8,
+              "offset": 2
+            },
+            "water_fog_color": 329011,
+            "water_color": 4159204
+          }
+        },
+        "name": "minecraft:wooded_badlands"
+      }
+    ],
+    "type": "minecraft:worldgen/biome"
+  },
+  "minecraft:chat_type": {
+    "type": "minecraft:chat_type",
+    "value": [
+      {
+        "id": 0,
+        "name": "minecraft:chat",
+        "element": {
+          "chat": {
+            "translation_key": "chat.type.text",
+            "parameters": [
+              "sender",
+              "content"
+            ]
+          },
+          "narration": {
+            "translation_key": "chat.type.text.narrate",
+            "parameters": [
+              "sender",
+              "content"
+            ]
+          }
+        }
+      },
+      {
+        "name": "minecraft:emote_command",
+        "id": 1,
+        "element": {
+          "chat": {
+            "parameters": [
+              "sender",
+              "content"
+            ],
+            "translation_key": "chat.type.emote"
+          },
+          "narration": {
+            "parameters": [
+              "sender",
+              "content"
+            ],
+            "translation_key": "chat.type.emote"
+          }
+        }
+      },
+      {
+        "name": "minecraft:msg_command_incoming",
+        "id": 2,
+        "element": {
+          "narration": {
+            "parameters": [
+              "sender",
+              "content"
+            ],
+            "translation_key": "chat.type.text.narrate"
+          },
+          "chat": {
+            "parameters": [
+              "sender",
+              "content"
+            ],
+            "translation_key": "commands.message.display.incoming",
+            "style": {
+              "italic": 1,
+              "color": "gray"
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "element": {
+          "narration": {
+            "translation_key": "chat.type.text.narrate",
+            "parameters": [
+              "sender",
+              "content"
+            ]
+          },
+          "chat": {
+            "parameters": [
+              "target",
+              "content"
+            ],
+            "style": {
+              "italic": 1,
+              "color": "gray"
+            },
+            "translation_key": "commands.message.display.outgoing"
+          }
+        },
+        "name": "minecraft:msg_command_outgoing"
+      },
+      {
+        "name": "minecraft:say_command",
+        "element": {
+          "narration": {
+            "parameters": [
+              "sender",
+              "content"
+            ],
+            "translation_key": "chat.type.text.narrate"
+          },
+          "chat": {
+            "parameters": [
+              "sender",
+              "content"
+            ],
+            "translation_key": "chat.type.announcement"
+          }
+        },
+        "id": 4
+      },
+      {
+        "id": 5,
+        "element": {
+          "chat": {
+            "parameters": [
+              "target",
+              "sender",
+              "content"
+            ],
+            "translation_key": "chat.type.team.text"
+          },
+          "narration": {
+            "translation_key": "chat.type.text.narrate",
+            "parameters": [
+              "sender",
+              "content"
+            ]
+          }
+        },
+        "name": "minecraft:team_msg_command_incoming"
+      },
+      {
+        "name": "minecraft:team_msg_command_outgoing",
+        "id": 6,
+        "element": {
+          "chat": {
+            "parameters": [
+              "target",
+              "sender",
+              "content"
+            ],
+            "translation_key": "chat.type.team.sent"
+          },
+          "narration": {
+            "translation_key": "chat.type.text.narrate",
+            "parameters": [
+              "sender",
+              "content"
+            ]
+          }
+        }
+      },
+      {
+        "name": "minecraft:raw",
+        "id": 7,
+        "element": {
+          "narration": {
+            "translation_key": "%s",
+            "parameters": [
+              "content"
+            ]
+          },
+          "chat": {
+            "translation_key": "%s",
+            "parameters": [
+              "content"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "minecraft:dimension_type": {
+    "type": "minecraft:dimension_type",
+    "value": [
+      {
+        "id": 0,
+        "name": "minecraft:overworld",
+        "element": {
+          "ambient_light": 0,
+          "infiniburn": "#minecraft:infiniburn_overworld",
+          "effects": "minecraft:overworld",
+          "respawn_anchor_works": 0,
+          "bed_works": 1,
+          "monster_spawn_light_level": {
+            "value": {
+              "min_inclusive": 0,
+              "max_inclusive": 7
+            },
+            "type": "minecraft:uniform"
+          },
+          "piglin_safe": 0,
+          "height": 384,
+          "monster_spawn_block_light_limit": 0,
+          "ultrawarm": 0,
+          "min_y": -64,
+          "coordinate_scale": 1,
+          "has_raids": 1,
+          "natural": 1,
+          "logical_height": 384,
+          "has_ceiling": 0,
+          "has_skylight": 1
+        }
+      },
+      {
+        "element": {
+          "ultrawarm": 0,
+          "natural": 1,
+          "min_y": -64,
+          "logical_height": 384,
+          "effects": "minecraft:overworld",
+          "height": 384,
+          "bed_works": 1,
+          "coordinate_scale": 1,
+          "monster_spawn_block_light_limit": 0,
+          "has_skylight": 1,
+          "has_ceiling": 1,
+          "infiniburn": "#minecraft:infiniburn_overworld",
+          "respawn_anchor_works": 0,
+          "piglin_safe": 0,
+          "has_raids": 1,
+          "monster_spawn_light_level": {
+            "type": "minecraft:uniform",
+            "value": {
+              "min_inclusive": 0,
+              "max_inclusive": 7
+            }
+          },
+          "ambient_light": 0
+        },
+        "id": 1,
+        "name": "minecraft:overworld_caves"
+      },
+      {
+        "element": {
+          "monster_spawn_light_level": {
+            "type": "minecraft:uniform",
+            "value": {
+              "min_inclusive": 0,
+              "max_inclusive": 7
+            }
+          },
+          "piglin_safe": 0,
+          "min_y": 0,
+          "has_ceiling": 0,
+          "monster_spawn_block_light_limit": 0,
+          "coordinate_scale": 1,
+          "infiniburn": "#minecraft:infiniburn_end",
+          "has_raids": 1,
+          "fixed_time": 6000,
+          "respawn_anchor_works": 0,
+          "logical_height": 256,
+          "ambient_light": 0,
+          "ultrawarm": 0,
+          "bed_works": 0,
+          "effects": "minecraft:the_end",
+          "height": 256,
+          "natural": 0,
+          "has_skylight": 0
+        },
+        "id": 2,
+        "name": "minecraft:the_end"
+      },
+      {
+        "name": "minecraft:the_nether",
+        "element": {
+          "piglin_safe": 1,
+          "logical_height": 128,
+          "fixed_time": 18000,
+          "effects": "minecraft:the_nether",
+          "monster_spawn_light_level": 7,
+          "has_ceiling": 1,
+          "respawn_anchor_works": 1,
+          "ambient_light": 0.1,
+          "ultrawarm": 1,
+          "coordinate_scale": 8,
+          "bed_works": 0,
+          "natural": 0,
+          "monster_spawn_block_light_limit": 15,
+          "min_y": 0,
+          "infiniburn": "#minecraft:infiniburn_nether",
+          "has_skylight": 0,
+          "has_raids": 0,
+          "height": 256
+        },
+        "id": 3
+      }
+    ]
+  }
+}

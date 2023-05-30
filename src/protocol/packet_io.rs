@@ -8,6 +8,8 @@ use byteorder::{ReadBytesExt, WriteBytesExt};
 use crate::protocol::fields::numeric::{VarInt, VarLong};
 use crate::protocol::fields::PacketField;
 
+use super::Serverbound;
+
 const SEGMENT_BITS: u32 = 0x7F; /* = 127 */
 const CONTINUE_BIT: u32 = 0x80; /* = 128 */
 const MAX_VARINT_BITS: usize = 32;

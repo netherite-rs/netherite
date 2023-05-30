@@ -11,15 +11,24 @@ use crate::protocol::fields::position::Position;
 use crate::protocol::fields::profile::GameProfile;
 use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
 use protocol_derive::{Clientbound, Serverbound};
+use uuid::Uuid;
+
+// #[derive(Serverbound, Debug)]
+// #[packet(id = 0x00)]
+// pub struct LoginStart {
+//     pub name: String,
+//     pub has_sig_data: bool,
+//     pub timestamp: Option<i64>,
+//     pub public_key: Option<Vec<u8>>,
+//     pub signature: Option<Vec<u8>>,
+// }
 
 #[derive(Serverbound, Debug)]
 #[packet(id = 0x00)]
 pub struct LoginStart {
     pub name: String,
-    pub has_sig_data: bool,
-    pub timestamp: Option<i64>,
-    pub public_key: Option<Vec<u8>>,
-    pub signature: Option<Vec<u8>>,
+    pub has_uuid: bool,
+    pub uuid: Option<Uuid>
 }
 
 #[derive(Clientbound, Debug)]
@@ -48,32 +57,33 @@ pub struct SetCompressionPacket {
     pub threshold: VarInt,
 }
 
-#[derive(Debug)]
+#[derive(Serverbound, Debug)]
+#[packet(id = 0x01)]
 pub struct EncryptionResponse {
     pub shared_secret: Vec<u8>,
-    pub has_verify_token: bool,
-    pub verify_token: Option<Vec<u8>>,
-    pub salt: Option<i64>,
-    pub message_signature: Option<Vec<u8>>,
+    // pub has_verify_token: bool,
+    pub verify_token: Vec<u8>,
+    // pub salt: Option<i64>,
+    // pub message_signature: Option<Vec<u8>>,
 }
 
-impl Serverbound for EncryptionResponse {
-    fn read_packet(input: &mut ByteBuffer) -> EncryptionResponse {
-        let shared_secret = input.read_field::<Vec<u8>>().expect("failed to read shared_secret");
-        let has_verify_token = input.read_bool().expect("failed to read has_verify_token");
-        EncryptionResponse {
-            shared_secret,
-            has_verify_token,
-            verify_token: if has_verify_token { input.read_field().expect("failed to read verify_token") } else { None },
-            salt: if !has_verify_token { input.read_field().expect("failed to read salt") } else { None },
-            message_signature: if !has_verify_token { input.read_field().expect("failed to read message_signature") } else { None },
-        }
-    }
-    fn id() -> i32 { 0x01 }
-}
+// impl Serverbound for EncryptionResponse {
+//     fn read_packet(input: &mut ByteBuffer) -> EncryptionResponse {
+//         let shared_secret = input.read_field::<Vec<u8>>().expect("failed to read shared_secret");
+//         let verify_ = input.read_bool().expect("failed to read has_verify_token");
+//         EncryptionResponse {
+//             shared_secret,
+//             has_verify_token,
+//             verify_token: if has_verify_token { input.read_field().expect("failed to read verify_token") } else { None },
+//             salt: if !has_verify_token { input.read_field().expect("failed to read salt") } else { None },
+//             message_signature: if !has_verify_token { input.read_field().expect("failed to read message_signature") } else { None },
+//         }
+//     }
+//     fn id() -> i32 { 0x01 }
+// }
 
 #[derive(Clientbound, Serverbound, Debug)]
-#[packet(id = 0x25)]
+#[packet(id = 0x28)]
 pub struct LoginPlay {
     pub entity_id: i32,
     pub is_hardcore: bool,

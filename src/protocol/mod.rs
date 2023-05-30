@@ -32,8 +32,8 @@ mod tests {
 
     use bytebuffer::ByteBuffer;
 
-    use crate::{Clientbound, Serverbound};
-    use crate::compression::{read_compressed_packet, write_compressed_packet};
+    use crate::protocol::{Clientbound, Serverbound};
+    use crate::protocol::compression::{read_compressed_packet, write_compressed_packet};
     use crate::protocol::fields::generic::Json;
     use crate::protocol::fields::numeric::{VarInt, VarLong};
     use crate::protocol::fields::position::Position;
