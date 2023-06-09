@@ -2,11 +2,11 @@ use std::io::{Read, Write};
 
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 use nbt::{Blob, Value};
-use protocol_derive::Clientbound;
+use protocol::Clientbound;
 
-use crate::protocol::fields::numeric::{BitSet, VarInt};
-use crate::protocol::fields::PacketField;
-use crate::protocol::packet_io::{PacketReaderExt, PacketWriterExt};
+use protocol::fields::numeric::{BitSet, VarInt};
+use protocol::fields::PacketField;
+use protocol::fields::io_ext::{PacketReaderExt, PacketWriterExt};
 
 #[derive(Clientbound)]
 #[packet(id = 0x21)]

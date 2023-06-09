@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::protocol::fields::key::Key;
+use protocol::fields::key::Key;
 
 #[derive(Serialize, Deserialize)]
 pub struct Dimension {

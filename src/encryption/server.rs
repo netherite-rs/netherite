@@ -1,6 +1,6 @@
 use rand::Rng;
 use rsa::pkcs8::EncodePublicKey;
-use rsa::{errors::Result, PaddingScheme, PublicKey, RsaPrivateKey, RsaPublicKey};
+use rsa::{errors::Result, Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
 
 pub struct ServerEncryption {
     private_key: RsaPrivateKey,
@@ -23,16 +23,15 @@ impl ServerEncryption {
 
     pub fn encrypt(&self, data: &Vec<u8>) -> Result<Vec<u8>> {
         let mut rng = rand::thread_rng();
-        self.private_key.encrypt(
+        self.public_key.encrypt(
             &mut rng,
-            PaddingScheme::new_pkcs1v15_encrypt(),
+            Pkcs1v15Encrypt,
             data.as_slice(),
         )
     }
 
     pub fn decrypt(&self, data: &Vec<u8>) -> Result<Vec<u8>> {
-        self.private_key
-            .decrypt(PaddingScheme::new_pkcs1v15_encrypt(), data.as_slice())
+        self.private_key.decrypt(Pkcs1v15Encrypt, data.as_slice())
     }
 
     pub fn public_key_encoded(&self) -> Vec<u8> {

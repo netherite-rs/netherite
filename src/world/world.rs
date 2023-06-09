@@ -1,5 +1,5 @@
 use std::path::Path;
-use crate::protocol::fields::position::Position;
+use protocol::fields::position::Position;
 // use crate::dimension::dimension::DimensionType;
 
 // pub struct World {

@@ -1,7 +1,10 @@
-use protocol_derive::Clientbound;
+use chat::ChatMode;
+use protocol::{Clientbound, Serverbound};
 
-use crate::chat::text_component::TextComponent;
-use crate::protocol::fields::position::Position;
+use chat::text_component::TextComponent;
+use protocol::fields::generic::Ordinal;
+use protocol::fields::numeric::VarInt;
+use protocol::fields::position::Position;
 
 pub mod chunk;
 pub mod section;
@@ -11,9 +14,20 @@ pub mod section;
 pub struct BundleDelimiter;
 
 #[derive(Clientbound, Debug)]
-#[packet(id = 0x19)]
+#[packet(id = 0x1A)]
 pub struct DisconnectPlay {
     pub reason: TextComponent,
+}
+
+#[derive(Serverbound, Debug)]
+#[packet(id = 0x08)]
+pub struct ClientInformation {
+    locale: String,
+    view_distance: u8,
+    chat_mode: Ordinal<ChatMode>,
+    chat_colors: bool,
+    display_skin_parts: u8,
+    main_hand: VarInt,
 }
 
 #[derive(Clientbound, Debug)]

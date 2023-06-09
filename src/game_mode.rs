@@ -5,7 +5,7 @@ use serde::de::{Error, Visitor};
 use enum_utils::{NamedEnum, OrdinalEnum};
 use crate::util::StringVisitor;
 
-#[derive(NamedEnum, OrdinalEnum, Debug)]
+#[derive(OrdinalEnum, Debug)]
 pub enum GameMode {
     Survival,
     Creative,
@@ -33,7 +33,7 @@ impl<'de> Deserialize<'de> for GameMode {
             "creative" => Ok(GameMode::Creative),
             "adventure" => Ok(GameMode::Adventure),
             "spectator" => Ok(GameMode::Spectator),
-            v => Err(D::Error::custom(format!("invalid gamemode: {}. Expected 'survival', 'creative', 'adventure' or 'spectator'.", v)))
+            v => Err(Error::custom(format!("invalid gamemode: {}. Expected 'survival', 'creative', 'adventure' or 'spectator'.", v)))
         }
     }
 }

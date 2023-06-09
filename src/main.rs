@@ -1,7 +1,9 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
+
 extern crate core;
 // Re-export as #[derive(Clientbound, Serverbound)].
 #[cfg(feature = "protocol_derive")]
-#[allow(unused_imports)]
 #[macro_use]
 extern crate protocol_derive;
 
@@ -13,20 +15,21 @@ use crate::server::server::Server;
 #[cfg(feature = "protocol_derive")]
 #[doc(hidden)]
 pub use protocol_derive::*;
+use crate::app::setup_netherite_app;
 
-mod chat;
 mod config;
 mod dimension;
 mod encryption;
 mod game_mode;
-mod net;
+mod client;
 mod packets;
-mod protocol;
 mod region;
 mod server;
 mod server_cfg;
 mod util;
 mod world;
+mod app;
+
 //
 // #[tokio::main]
 // async fn main() -> anyhow::Result<()> {
@@ -36,19 +39,16 @@ mod world;
 //     GoodServer::start(server).await;
 //     Ok(())
 // }
+//
+// #[tokio::main]
+// async fn main() {
+//     let directory = Path::new("run").to_path_buf();
+//     let properties = ServerProperties::from_file(&directory.join("server.toml"));
+//     Server::start(directory, properties).await;
+// }
 
-#[tokio::main]
-async fn main() {
-    let directory = Path::new("run").to_path_buf();
-    let properties = ServerProperties::read(&directory.join("server.toml"));
-    if let Ok(properties) = properties {
-        Server::start(directory, properties).await;
-    } else {
-        eprintln!(
-            "Error parsing server.toml: {}",
-            properties.err().unwrap().to_string()
-        );
-    }
+fn main() {
+    setup_netherite_app();
 }
 
 // fn main() {
