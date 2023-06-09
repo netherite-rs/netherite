@@ -1,6 +1,9 @@
 # Netherite
 A Minecraft server implementation in Rust
 
+# Status
+Development has stopped on this project, however the code is public should anyone decide to take on the project.
+
 ## Motivation
 
 The main motivation for this project can be summarized in 3 points:
